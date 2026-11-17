@@ -54,6 +54,21 @@ class IdosellImportTest extends TestCase
         $this->assertDatabaseHas('sync_runs', ['source' => 'idosell', 'state' => 'failed']);
     }
 
+    public function test_documented_empty_search_fault_is_success_without_orders(): void
+    {
+        Http::fake(['idosell.test/*' => Http::response(['errors' => ['faultCode' => 2, 'faultString' => 'Wyszukiwarka zamówień: zwrócono pusty wynik']])]);
+        $this->assertSame(0, app(IdosellOrders::class)->sync());
+        $this->assertDatabaseCount('orders', 0);
+        $this->assertDatabaseCount('sync_cursors', 1);
+    }
+
+    public function test_other_fault_with_same_code_does_not_advance_cursor(): void
+    {
+        Http::fake(['idosell.test/*' => Http::response(['errors' => ['faultCode' => 2, 'faultString' => 'Inny błąd']])]);
+        $this->artisan('blancco:sync-idosell')->assertFailed();
+        $this->assertDatabaseCount('sync_cursors', 0);
+    }
+
     public function test_malformed_success_response_is_not_empty_success(): void
     {
         Http::fake(['idosell.test/*' => Http::response(['error' => 'invalid key'])]);

@@ -32,6 +32,11 @@ class IdosellOrders
                         'resultsPage' => $page, 'resultsLimit' => 100,
                     ]])->throw();
                 $body = $response->json();
+                if (is_array($body) && (string) ($body['errors']['faultCode'] ?? '') === '2'
+                    && ($body['errors']['faultString'] ?? '') === 'Wyszukiwarka zamówień: zwrócono pusty wynik') {
+                    $finished = true;
+                    break;
+                }
                 if (! is_array($body) || ! isset($body['Results']) || ! is_array($body['Results'])) {
                     throw new \RuntimeException('IDOSELL_INVALID_RESPONSE');
                 }
