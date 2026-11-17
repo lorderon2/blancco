@@ -1,0 +1,3 @@
+@extends('layout')
+@section('title', 'Nowe hasło')
+@section('content')<section class="card login"><h1>Ustaw nowe hasło</h1><form method="post" action="{{ route('password.update') }}">@csrf<input type="hidden" name="token" value="{{ $token }}"><label>E-mail<input type="email" name="email" required value="{{ old('email',$email) }}" autocomplete="username"></label><label>Nowe hasło<input type="password" name="password" minlength="12" autocomplete="new-password" required></label><label>Powtórz hasło<input type="password" name="password_confirmation" autocomplete="new-password" required></label><button class="primary full">Zmień hasło</button></form></section>@endsection

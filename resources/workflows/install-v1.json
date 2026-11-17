@@ -1,0 +1,1187 @@
+{
+  "startItem": "Booted",
+  "reportToXml": true,
+  "autoStart": true,
+  "useCases": [],
+  "processors": [],
+  "coreActivities": [],
+  "description": "Wersja do importu testowego. Uzupełnij API_HOST i API_TOKEN. Wymagany test na urządzeniu przed produkcją.",
+  "editorMetadata": {
+    "editorGeneration": "V3",
+    "editorVersion": "7.21.0",
+    "collisionsEnabled": true,
+    "minimizeItems": false,
+    "profile": "bde",
+    "type": "workflow",
+    "x": 0,
+    "y": 0,
+    "commit": "1.3.0"
+  },
+  "name": "AMSO Install v1 - test import",
+  "objects": [
+    {
+      "itemBriefText": "Start",
+      "itemType": "Booted",
+      "itemActionType": "Booted",
+      "itemAtOk": 1,
+      "itemAtFail": -1,
+      "x": -1600,
+      "y": 0,
+      "item_id": 0
+    },
+    {
+      "itemBriefText": "Serial sprzętowy",
+      "itemType": "Set value",
+      "itemActionType": "Set value",
+      "itemAtOk": 2,
+      "itemAtFail": -1,
+      "x": -1300,
+      "y": 0,
+      "setValueExp": "<VARIABLE SerialNumber> = <REPORTPATH blancco_data.blancco_hardware_report.system.serial>",
+      "item_id": 1
+    },
+    {
+      "itemBriefText": "Wyzeruj RequestKey",
+      "itemType": "Set value",
+      "itemActionType": "Set value",
+      "itemAtOk": 3,
+      "itemAtFail": -1,
+      "x": -1000,
+      "y": 0,
+      "setValueExp": "<VARIABLE RequestKey> = \"\"",
+      "item_id": 2
+    },
+    {
+      "itemBriefText": "Wyzeruj JobId",
+      "itemType": "Set value",
+      "itemActionType": "Set value",
+      "itemAtOk": 4,
+      "itemAtFail": -1,
+      "x": -790,
+      "y": 0,
+      "setValueExp": "<VARIABLE JobId> = \"\"",
+      "item_id": 3
+    },
+    {
+      "itemBriefText": "Wyzeruj AttemptId",
+      "itemType": "Set value",
+      "itemActionType": "Set value",
+      "itemAtOk": 5,
+      "itemAtFail": -1,
+      "x": -580,
+      "y": 0,
+      "setValueExp": "<VARIABLE AttemptId> = \"\"",
+      "item_id": 4
+    },
+    {
+      "itemBriefText": "Wyzeruj ImageName",
+      "itemType": "Set value",
+      "itemActionType": "Set value",
+      "itemAtOk": 6,
+      "itemAtFail": -1,
+      "x": -370,
+      "y": 0,
+      "setValueExp": "<VARIABLE ImageName> = \"\"",
+      "item_id": 5
+    },
+    {
+      "itemBriefText": "Wyzeruj HasDpk",
+      "itemType": "Set value",
+      "itemActionType": "Set value",
+      "itemAtOk": 7,
+      "itemAtFail": -1,
+      "x": -160,
+      "y": 0,
+      "setValueExp": "<VARIABLE HasDpk> = \"\"",
+      "item_id": 6
+    },
+    {
+      "itemBriefText": "Wyzeruj Decision",
+      "itemType": "Set value",
+      "itemActionType": "Set value",
+      "itemAtOk": 8,
+      "itemAtFail": -1,
+      "x": 50,
+      "y": 0,
+      "setValueExp": "<VARIABLE Decision> = \"\"",
+      "item_id": 7
+    },
+    {
+      "itemBriefText": "Wyzeruj ApiMessage",
+      "itemType": "Set value",
+      "itemActionType": "Set value",
+      "itemAtOk": 9,
+      "itemAtFail": -1,
+      "x": 260,
+      "y": 0,
+      "setValueExp": "<VARIABLE ApiMessage> = \"\"",
+      "item_id": 8
+    },
+    {
+      "itemBriefText": "Wyzeruj ConfigurationVersion",
+      "itemType": "Set value",
+      "itemActionType": "Set value",
+      "itemAtOk": 10,
+      "itemAtFail": -1,
+      "x": 470,
+      "y": 0,
+      "setValueExp": "<VARIABLE ConfigurationVersion> = \"\"",
+      "item_id": 9
+    },
+    {
+      "itemBriefText": "Wyzeruj PreviousInstalledAt",
+      "itemType": "Set value",
+      "itemActionType": "Set value",
+      "itemAtOk": 11,
+      "itemAtFail": -1,
+      "x": 680,
+      "y": 0,
+      "setValueExp": "<VARIABLE PreviousInstalledAt> = \"\"",
+      "item_id": 10
+    },
+    {
+      "itemBriefText": "Wyzeruj OrderNumber",
+      "itemType": "Set value",
+      "itemActionType": "Set value",
+      "itemAtOk": 12,
+      "itemAtFail": -1,
+      "x": 890,
+      "y": 0,
+      "setValueExp": "<VARIABLE OrderNumber> = \"\"",
+      "item_id": 11
+    },
+    {
+      "itemBriefText": "Wyzeruj AttemptState",
+      "itemType": "Set value",
+      "itemActionType": "Set value",
+      "itemAtOk": 13,
+      "itemAtFail": -1,
+      "x": 1100,
+      "y": 0,
+      "setValueExp": "<VARIABLE AttemptState> = \"\"",
+      "item_id": 12
+    },
+    {
+      "itemBriefText": "Pobierz identyfikator uruchomienia",
+      "itemType": "Server Message",
+      "itemActionType": "Server Message",
+      "itemAtOk": 14,
+      "itemAtFail": 15,
+      "x": 1500,
+      "y": 0,
+      "requestTimeout": 20,
+      "returnStoreVariable": "<VARIABLE HttpReturnCode>",
+      "toServerPayload": {
+        "url": "http://REPLACE_WITH_API_HOST:8089/v1/request-key",
+        "requestMethod": "POST",
+        "requestType": "application/json",
+        "payload": {},
+        "extraheaders": "Authorization: Bearer REPLACE_WITH_API_TOKEN",
+        "reply": {
+          "requestKey": "<VARIABLE RequestKey>"
+        }
+      },
+      "item_id": 13
+    },
+    {
+      "itemBriefText": "Czy HttpReturnCode = 200?",
+      "itemType": "Condition",
+      "itemActionType": "Condition",
+      "itemAtOk": 17,
+      "itemAtFail": 15,
+      "x": 1800,
+      "y": 0,
+      "trueif": "<VARIABLE HttpReturnCode> == 200",
+      "editorData": {
+        "condition": {
+          "conditions": [
+            {
+              "type": "condition",
+              "left": "<VARIABLE HttpReturnCode>",
+              "right": "200",
+              "operation": "=="
+            }
+          ],
+          "bindOperation": "and"
+        }
+      },
+      "item_id": 14
+    },
+    {
+      "itemBriefText": "Brak komunikacji z API",
+      "itemType": "Message",
+      "itemActionType": "Message",
+      "itemAtOk": 16,
+      "itemAtFail": -1,
+      "x": 1800,
+      "y": 400,
+      "messageIcon": "information",
+      "dismissAfter": 0,
+      "messageString": "<p>Nie uzyskano identyfikatora uruchomienia. Nie rozpoczęto instalacji.</p>",
+      "item_id": 15
+    },
+    {
+      "itemBriefText": "Ponów komunikację",
+      "itemType": "Question",
+      "itemActionType": "Question",
+      "itemAtOk": 13,
+      "itemAtFail": 65,
+      "x": 2100,
+      "y": 400,
+      "questionString": "<p>Spróbować ponownie?</p>",
+      "defaultButton": "No",
+      "item_id": 16
+    },
+    {
+      "itemBriefText": "Pobierz zlecenie",
+      "itemType": "Server Message",
+      "itemActionType": "Server Message",
+      "itemAtOk": 18,
+      "itemAtFail": 19,
+      "x": 2100,
+      "y": 0,
+      "requestTimeout": 20,
+      "returnStoreVariable": "<VARIABLE HttpReturnCode>",
+      "toServerPayload": {
+        "url": "http://REPLACE_WITH_API_HOST:8089/v1/lookup?serial=<VARIABLE SerialNumber>",
+        "requestMethod": "GET",
+        "requestType": "application/json",
+        "payload": {},
+        "extraheaders": "Authorization: Bearer REPLACE_WITH_API_TOKEN",
+        "reply": {
+          "decision": "<VARIABLE Decision>",
+          "jobId": "<VARIABLE JobId>",
+          "configurationVersion": "<VARIABLE ConfigurationVersion>",
+          "imageName": "<VARIABLE ImageName>",
+          "hasDpk": "<VARIABLE HasDpk>",
+          "message": "<VARIABLE ApiMessage>",
+          "installedAt": "<VARIABLE PreviousInstalledAt>",
+          "orderNumber": "<VARIABLE OrderNumber>"
+        }
+      },
+      "item_id": 17
+    },
+    {
+      "itemBriefText": "Czy HttpReturnCode = 200?",
+      "itemType": "Condition",
+      "itemActionType": "Condition",
+      "itemAtOk": 21,
+      "itemAtFail": 19,
+      "x": 2400,
+      "y": 0,
+      "trueif": "<VARIABLE HttpReturnCode> == 200",
+      "editorData": {
+        "condition": {
+          "conditions": [
+            {
+              "type": "condition",
+              "left": "<VARIABLE HttpReturnCode>",
+              "right": "200",
+              "operation": "=="
+            }
+          ],
+          "bindOperation": "and"
+        }
+      },
+      "item_id": 18
+    },
+    {
+      "itemBriefText": "Nie pobrano danych",
+      "itemType": "Message",
+      "itemActionType": "Message",
+      "itemAtOk": 20,
+      "itemAtFail": -1,
+      "x": 2400,
+      "y": 700,
+      "messageIcon": "information",
+      "dismissAfter": 0,
+      "messageString": "<p>API jest niedostępne lub odrzuciło żądanie. Nie rozpoczęto instalacji.</p>",
+      "item_id": 19
+    },
+    {
+      "itemBriefText": "Ponów odczyt",
+      "itemType": "Question",
+      "itemActionType": "Question",
+      "itemAtOk": 17,
+      "itemAtFail": 65,
+      "x": 2700,
+      "y": 700,
+      "questionString": "<p>Spróbować ponownie pobrać dane?</p>",
+      "defaultButton": "No",
+      "item_id": 20
+    },
+    {
+      "itemBriefText": "Czy Decision = AUTO?",
+      "itemType": "Condition",
+      "itemActionType": "Condition",
+      "itemAtOk": 32,
+      "itemAtFail": 22,
+      "x": 2700,
+      "y": 0,
+      "trueif": "<VARIABLE Decision> == \"AUTO\"",
+      "editorData": {
+        "condition": {
+          "conditions": [
+            {
+              "type": "condition",
+              "left": "<VARIABLE Decision>",
+              "right": "\"AUTO\"",
+              "operation": "=="
+            }
+          ],
+          "bindOperation": "and"
+        }
+      },
+      "item_id": 21
+    },
+    {
+      "itemBriefText": "Czy Decision = ASK_RETRY?",
+      "itemType": "Condition",
+      "itemActionType": "Condition",
+      "itemAtOk": 23,
+      "itemAtFail": 25,
+      "x": 2700,
+      "y": 300,
+      "trueif": "<VARIABLE Decision> == \"ASK_RETRY\"",
+      "editorData": {
+        "condition": {
+          "conditions": [
+            {
+              "type": "condition",
+              "left": "<VARIABLE Decision>",
+              "right": "\"ASK_RETRY\"",
+              "operation": "=="
+            }
+          ],
+          "bindOperation": "and"
+        }
+      },
+      "item_id": 22
+    },
+    {
+      "itemBriefText": "Ponowna instalacja",
+      "itemType": "Message",
+      "itemActionType": "Message",
+      "itemAtOk": 24,
+      "itemAtFail": -1,
+      "x": 3100,
+      "y": 300,
+      "messageIcon": "information",
+      "dismissAfter": 0,
+      "messageString": "<p>Ten komputer był już instalowany: &lt;VARIABLE PreviousInstalledAt&gt;. Zamówienie: &lt;VARIABLE OrderNumber&gt;. Obraz: &lt;VARIABLE ImageName&gt;.</p>",
+      "item_id": 23
+    },
+    {
+      "itemBriefText": "Wybór ponownej instalacji",
+      "itemType": "Question",
+      "itemActionType": "Question",
+      "itemAtOk": 35,
+      "itemAtFail": 31,
+      "x": 3500,
+      "y": 300,
+      "questionString": "<p>Zainstalować ponownie według zamówienia? Nie: wybór ręczny.</p>",
+      "defaultButton": "No",
+      "item_id": 24
+    },
+    {
+      "itemBriefText": "Czy Decision = MANUAL?",
+      "itemType": "Condition",
+      "itemActionType": "Condition",
+      "itemAtOk": 28,
+      "itemAtFail": 26,
+      "x": 2700,
+      "y": 1000,
+      "trueif": "<VARIABLE Decision> == \"MANUAL\"",
+      "editorData": {
+        "condition": {
+          "conditions": [
+            {
+              "type": "condition",
+              "left": "<VARIABLE Decision>",
+              "right": "\"MANUAL\"",
+              "operation": "=="
+            }
+          ],
+          "bindOperation": "and"
+        }
+      },
+      "item_id": 25
+    },
+    {
+      "itemBriefText": "Czy Decision = WAIT?",
+      "itemType": "Condition",
+      "itemActionType": "Condition",
+      "itemAtOk": 28,
+      "itemAtFail": 27,
+      "x": 2700,
+      "y": 1300,
+      "trueif": "<VARIABLE Decision> == \"WAIT\"",
+      "editorData": {
+        "condition": {
+          "conditions": [
+            {
+              "type": "condition",
+              "left": "<VARIABLE Decision>",
+              "right": "\"WAIT\"",
+              "operation": "=="
+            }
+          ],
+          "bindOperation": "and"
+        }
+      },
+      "item_id": 26
+    },
+    {
+      "itemBriefText": "Czy Decision = BLOCKED?",
+      "itemType": "Condition",
+      "itemActionType": "Condition",
+      "itemAtOk": 28,
+      "itemAtFail": 30,
+      "x": 2700,
+      "y": 1600,
+      "trueif": "<VARIABLE Decision> == \"BLOCKED\"",
+      "editorData": {
+        "condition": {
+          "conditions": [
+            {
+              "type": "condition",
+              "left": "<VARIABLE Decision>",
+              "right": "\"BLOCKED\"",
+              "operation": "=="
+            }
+          ],
+          "bindOperation": "and"
+        }
+      },
+      "item_id": 27
+    },
+    {
+      "itemBriefText": "Dane do instalacji",
+      "itemType": "Message",
+      "itemActionType": "Message",
+      "itemAtOk": 29,
+      "itemAtFail": -1,
+      "x": 3100,
+      "y": 1000,
+      "messageIcon": "information",
+      "dismissAfter": 0,
+      "messageString": "<p>&lt;VARIABLE ApiMessage&gt;</p>",
+      "item_id": 28
+    },
+    {
+      "itemBriefText": "Wybór ręczny",
+      "itemType": "Question",
+      "itemActionType": "Question",
+      "itemAtOk": 31,
+      "itemAtFail": 65,
+      "x": 3500,
+      "y": 1000,
+      "questionString": "<p>Przejść do ręcznego wyboru obrazu i klucza?</p>",
+      "defaultButton": "No",
+      "item_id": 29
+    },
+    {
+      "itemBriefText": "Nie można rozpocząć",
+      "itemType": "Message",
+      "itemActionType": "Message",
+      "itemAtOk": 65,
+      "itemAtFail": -1,
+      "x": 3100,
+      "y": 1600,
+      "messageIcon": "information",
+      "dismissAfter": 0,
+      "messageString": "<p>&lt;VARIABLE ApiMessage&gt;. Sprawdź stan urządzenia w aplikacji. Nie rozpoczynaj drugiej instalacji.</p>",
+      "item_id": 30
+    },
+    {
+      "itemBriefText": "Klucz dla instalacji ręcznej",
+      "itemType": "Question",
+      "itemActionType": "Question",
+      "itemAtOk": 38,
+      "itemAtFail": 41,
+      "x": 3900,
+      "y": 1000,
+      "questionString": "<p>Czy użyć klucza produktu?</p>",
+      "defaultButton": "No",
+      "item_id": 31
+    },
+    {
+      "itemBriefText": "Rozpocznij według zamówienia",
+      "itemType": "Server Message",
+      "itemActionType": "Server Message",
+      "itemAtOk": 33,
+      "itemAtFail": 53,
+      "x": 4000,
+      "y": -400,
+      "requestTimeout": 20,
+      "returnStoreVariable": "<VARIABLE HttpReturnCode>",
+      "toServerPayload": {
+        "url": "http://REPLACE_WITH_API_HOST:8089/v1/attempts/start",
+        "requestMethod": "POST",
+        "requestType": "application/json",
+        "payload": {
+          "serial": "<VARIABLE SerialNumber>",
+          "jobId": "<VARIABLE JobId>",
+          "configurationVersion": "<VARIABLE ConfigurationVersion>",
+          "mode": "order",
+          "requestKey": "<VARIABLE RequestKey>",
+          "retryConfirmed": false
+        },
+        "extraheaders": "Authorization: Bearer REPLACE_WITH_API_TOKEN",
+        "reply": {
+          "attemptId": "<VARIABLE AttemptId>",
+          "state": "<VARIABLE AttemptState>",
+          "imageName": "<VARIABLE ImageName>",
+          "hasDpk": "<VARIABLE HasDpk>"
+        }
+      },
+      "item_id": 32
+    },
+    {
+      "itemBriefText": "Czy HttpReturnCode = 200?",
+      "itemType": "Condition",
+      "itemActionType": "Condition",
+      "itemAtOk": 44,
+      "itemAtFail": 34,
+      "x": 4300,
+      "y": -400,
+      "trueif": "<VARIABLE HttpReturnCode> == 200",
+      "editorData": {
+        "condition": {
+          "conditions": [
+            {
+              "type": "condition",
+              "left": "<VARIABLE HttpReturnCode>",
+              "right": "200",
+              "operation": "=="
+            }
+          ],
+          "bindOperation": "and"
+        }
+      },
+      "item_id": 33
+    },
+    {
+      "itemBriefText": "Czy HttpReturnCode = 201?",
+      "itemType": "Condition",
+      "itemActionType": "Condition",
+      "itemAtOk": 44,
+      "itemAtFail": 53,
+      "x": 4600,
+      "y": -400,
+      "trueif": "<VARIABLE HttpReturnCode> == 201",
+      "editorData": {
+        "condition": {
+          "conditions": [
+            {
+              "type": "condition",
+              "left": "<VARIABLE HttpReturnCode>",
+              "right": "201",
+              "operation": "=="
+            }
+          ],
+          "bindOperation": "and"
+        }
+      },
+      "item_id": 34
+    },
+    {
+      "itemBriefText": "Rozpocznij według zamówienia",
+      "itemType": "Server Message",
+      "itemActionType": "Server Message",
+      "itemAtOk": 36,
+      "itemAtFail": 53,
+      "x": 4000,
+      "y": 0,
+      "requestTimeout": 20,
+      "returnStoreVariable": "<VARIABLE HttpReturnCode>",
+      "toServerPayload": {
+        "url": "http://REPLACE_WITH_API_HOST:8089/v1/attempts/start",
+        "requestMethod": "POST",
+        "requestType": "application/json",
+        "payload": {
+          "serial": "<VARIABLE SerialNumber>",
+          "jobId": "<VARIABLE JobId>",
+          "configurationVersion": "<VARIABLE ConfigurationVersion>",
+          "mode": "order",
+          "requestKey": "<VARIABLE RequestKey>",
+          "retryConfirmed": true
+        },
+        "extraheaders": "Authorization: Bearer REPLACE_WITH_API_TOKEN",
+        "reply": {
+          "attemptId": "<VARIABLE AttemptId>",
+          "state": "<VARIABLE AttemptState>",
+          "imageName": "<VARIABLE ImageName>",
+          "hasDpk": "<VARIABLE HasDpk>"
+        }
+      },
+      "item_id": 35
+    },
+    {
+      "itemBriefText": "Czy HttpReturnCode = 200?",
+      "itemType": "Condition",
+      "itemActionType": "Condition",
+      "itemAtOk": 44,
+      "itemAtFail": 37,
+      "x": 4300,
+      "y": 0,
+      "trueif": "<VARIABLE HttpReturnCode> == 200",
+      "editorData": {
+        "condition": {
+          "conditions": [
+            {
+              "type": "condition",
+              "left": "<VARIABLE HttpReturnCode>",
+              "right": "200",
+              "operation": "=="
+            }
+          ],
+          "bindOperation": "and"
+        }
+      },
+      "item_id": 36
+    },
+    {
+      "itemBriefText": "Czy HttpReturnCode = 201?",
+      "itemType": "Condition",
+      "itemActionType": "Condition",
+      "itemAtOk": 44,
+      "itemAtFail": 53,
+      "x": 4600,
+      "y": 0,
+      "trueif": "<VARIABLE HttpReturnCode> == 201",
+      "editorData": {
+        "condition": {
+          "conditions": [
+            {
+              "type": "condition",
+              "left": "<VARIABLE HttpReturnCode>",
+              "right": "201",
+              "operation": "=="
+            }
+          ],
+          "bindOperation": "and"
+        }
+      },
+      "item_id": 37
+    },
+    {
+      "itemBriefText": "Zarejestruj ręczną próbę",
+      "itemType": "Server Message",
+      "itemActionType": "Server Message",
+      "itemAtOk": 39,
+      "itemAtFail": 53,
+      "x": 4300,
+      "y": 700,
+      "requestTimeout": 20,
+      "returnStoreVariable": "<VARIABLE HttpReturnCode>",
+      "toServerPayload": {
+        "url": "http://REPLACE_WITH_API_HOST:8089/v1/attempts/start",
+        "requestMethod": "POST",
+        "requestType": "application/json",
+        "payload": {
+          "serial": "<VARIABLE SerialNumber>",
+          "mode": "manual",
+          "requestKey": "<VARIABLE RequestKey>"
+        },
+        "extraheaders": "Authorization: Bearer REPLACE_WITH_API_TOKEN",
+        "reply": {
+          "attemptId": "<VARIABLE AttemptId>",
+          "state": "<VARIABLE AttemptState>"
+        }
+      },
+      "item_id": 38
+    },
+    {
+      "itemBriefText": "Czy HttpReturnCode = 200?",
+      "itemType": "Condition",
+      "itemActionType": "Condition",
+      "itemAtOk": 46,
+      "itemAtFail": 40,
+      "x": 4600,
+      "y": 700,
+      "trueif": "<VARIABLE HttpReturnCode> == 200",
+      "editorData": {
+        "condition": {
+          "conditions": [
+            {
+              "type": "condition",
+              "left": "<VARIABLE HttpReturnCode>",
+              "right": "200",
+              "operation": "=="
+            }
+          ],
+          "bindOperation": "and"
+        }
+      },
+      "item_id": 39
+    },
+    {
+      "itemBriefText": "Czy HttpReturnCode = 201?",
+      "itemType": "Condition",
+      "itemActionType": "Condition",
+      "itemAtOk": 46,
+      "itemAtFail": 53,
+      "x": 4900,
+      "y": 700,
+      "trueif": "<VARIABLE HttpReturnCode> == 201",
+      "editorData": {
+        "condition": {
+          "conditions": [
+            {
+              "type": "condition",
+              "left": "<VARIABLE HttpReturnCode>",
+              "right": "201",
+              "operation": "=="
+            }
+          ],
+          "bindOperation": "and"
+        }
+      },
+      "item_id": 40
+    },
+    {
+      "itemBriefText": "Zarejestruj ręczną próbę",
+      "itemType": "Server Message",
+      "itemActionType": "Server Message",
+      "itemAtOk": 42,
+      "itemAtFail": 53,
+      "x": 4300,
+      "y": 1200,
+      "requestTimeout": 20,
+      "returnStoreVariable": "<VARIABLE HttpReturnCode>",
+      "toServerPayload": {
+        "url": "http://REPLACE_WITH_API_HOST:8089/v1/attempts/start",
+        "requestMethod": "POST",
+        "requestType": "application/json",
+        "payload": {
+          "serial": "<VARIABLE SerialNumber>",
+          "mode": "manual",
+          "requestKey": "<VARIABLE RequestKey>"
+        },
+        "extraheaders": "Authorization: Bearer REPLACE_WITH_API_TOKEN",
+        "reply": {
+          "attemptId": "<VARIABLE AttemptId>",
+          "state": "<VARIABLE AttemptState>"
+        }
+      },
+      "item_id": 41
+    },
+    {
+      "itemBriefText": "Czy HttpReturnCode = 200?",
+      "itemType": "Condition",
+      "itemActionType": "Condition",
+      "itemAtOk": 47,
+      "itemAtFail": 43,
+      "x": 4600,
+      "y": 1200,
+      "trueif": "<VARIABLE HttpReturnCode> == 200",
+      "editorData": {
+        "condition": {
+          "conditions": [
+            {
+              "type": "condition",
+              "left": "<VARIABLE HttpReturnCode>",
+              "right": "200",
+              "operation": "=="
+            }
+          ],
+          "bindOperation": "and"
+        }
+      },
+      "item_id": 42
+    },
+    {
+      "itemBriefText": "Czy HttpReturnCode = 201?",
+      "itemType": "Condition",
+      "itemActionType": "Condition",
+      "itemAtOk": 47,
+      "itemAtFail": 53,
+      "x": 4900,
+      "y": 1200,
+      "trueif": "<VARIABLE HttpReturnCode> == 201",
+      "editorData": {
+        "condition": {
+          "conditions": [
+            {
+              "type": "condition",
+              "left": "<VARIABLE HttpReturnCode>",
+              "right": "201",
+              "operation": "=="
+            }
+          ],
+          "bindOperation": "and"
+        }
+      },
+      "item_id": 43
+    },
+    {
+      "itemBriefText": "Czy AttemptState = started?",
+      "itemType": "Condition",
+      "itemActionType": "Condition",
+      "itemAtOk": 45,
+      "itemAtFail": 52,
+      "x": 5000,
+      "y": -200,
+      "trueif": "<VARIABLE AttemptState> == \"started\"",
+      "editorData": {
+        "condition": {
+          "conditions": [
+            {
+              "type": "condition",
+              "left": "<VARIABLE AttemptState>",
+              "right": "\"started\"",
+              "operation": "=="
+            }
+          ],
+          "bindOperation": "and"
+        }
+      },
+      "item_id": 44
+    },
+    {
+      "itemBriefText": "Czy HasDpk = YES?",
+      "itemType": "Condition",
+      "itemActionType": "Condition",
+      "itemAtOk": 48,
+      "itemAtFail": 49,
+      "x": 5300,
+      "y": -200,
+      "trueif": "<VARIABLE HasDpk> == \"YES\"",
+      "editorData": {
+        "condition": {
+          "conditions": [
+            {
+              "type": "condition",
+              "left": "<VARIABLE HasDpk>",
+              "right": "\"YES\"",
+              "operation": "=="
+            }
+          ],
+          "bindOperation": "and"
+        }
+      },
+      "item_id": 45
+    },
+    {
+      "itemBriefText": "Czy AttemptState = started?",
+      "itemType": "Condition",
+      "itemActionType": "Condition",
+      "itemAtOk": 50,
+      "itemAtFail": 52,
+      "x": 5200,
+      "y": 700,
+      "trueif": "<VARIABLE AttemptState> == \"started\"",
+      "editorData": {
+        "condition": {
+          "conditions": [
+            {
+              "type": "condition",
+              "left": "<VARIABLE AttemptState>",
+              "right": "\"started\"",
+              "operation": "=="
+            }
+          ],
+          "bindOperation": "and"
+        }
+      },
+      "item_id": 46
+    },
+    {
+      "itemBriefText": "Czy AttemptState = started?",
+      "itemType": "Condition",
+      "itemActionType": "Condition",
+      "itemAtOk": 51,
+      "itemAtFail": 52,
+      "x": 5200,
+      "y": 1200,
+      "trueif": "<VARIABLE AttemptState> == \"started\"",
+      "editorData": {
+        "condition": {
+          "conditions": [
+            {
+              "type": "condition",
+              "left": "<VARIABLE AttemptState>",
+              "right": "\"started\"",
+              "operation": "=="
+            }
+          ],
+          "bindOperation": "and"
+        }
+      },
+      "item_id": 47
+    },
+    {
+      "itemBriefText": "Według zamówienia z kluczem",
+      "itemType": "Reimage",
+      "itemActionType": "Reimage",
+      "itemAtOk": 55,
+      "itemAtFail": 59,
+      "x": 5700,
+      "y": -400,
+      "imageName": "variable",
+      "installDigitalProductKey": true,
+      "useCitizenshipLicense": false,
+      "getImageNameFromVariable": "<VARIABLE ImageName>",
+      "item_id": 48
+    },
+    {
+      "itemBriefText": "Według zamówienia bez klucza",
+      "itemType": "Reimage",
+      "itemActionType": "Reimage",
+      "itemAtOk": 55,
+      "itemAtFail": 59,
+      "x": 5700,
+      "y": 0,
+      "imageName": "variable",
+      "installDigitalProductKey": false,
+      "useCitizenshipLicense": false,
+      "getImageNameFromVariable": "<VARIABLE ImageName>",
+      "item_id": 49
+    },
+    {
+      "itemBriefText": "Ręcznie z kluczem",
+      "itemType": "Reimage",
+      "itemActionType": "Reimage",
+      "itemAtOk": 55,
+      "itemAtFail": 59,
+      "x": 5700,
+      "y": 600,
+      "imageName": "prompt",
+      "installDigitalProductKey": true,
+      "useCitizenshipLicense": false,
+      "item_id": 50
+    },
+    {
+      "itemBriefText": "Ręcznie bez klucza",
+      "itemType": "Reimage",
+      "itemActionType": "Reimage",
+      "itemAtOk": 55,
+      "itemAtFail": 59,
+      "x": 5700,
+      "y": 1000,
+      "imageName": "prompt",
+      "installDigitalProductKey": false,
+      "useCitizenshipLicense": false,
+      "item_id": 51
+    },
+    {
+      "itemBriefText": "Próba ma już wynik",
+      "itemType": "Message",
+      "itemActionType": "Message",
+      "itemAtOk": 65,
+      "itemAtFail": -1,
+      "x": 5400,
+      "y": 1600,
+      "messageIcon": "information",
+      "dismissAfter": 0,
+      "messageString": "<p>Ta próba ma już zapisany wynik. Nie uruchamiaj ponownie Reimage w tym uruchomieniu workflow.</p>",
+      "item_id": 52
+    },
+    {
+      "itemBriefText": "Nie rozpoczęto próby",
+      "itemType": "Message",
+      "itemActionType": "Message",
+      "itemAtOk": 54,
+      "itemAtFail": -1,
+      "x": 4400,
+      "y": 1900,
+      "messageIcon": "information",
+      "dismissAfter": 0,
+      "messageString": "<p>API nie potwierdziło startu. Zlecenie mogło się zmienić albo urządzenie ma inną aktywną próbę.</p>",
+      "item_id": 53
+    },
+    {
+      "itemBriefText": "Sprawdź stan",
+      "itemType": "Message",
+      "itemActionType": "Message",
+      "itemAtOk": 65,
+      "itemAtFail": -1,
+      "x": 4800,
+      "y": 1900,
+      "messageIcon": "information",
+      "dismissAfter": 0,
+      "messageString": "<p>Sprawdź zlecenie w aplikacji. Ponów wywołanie startu w edytorze tylko z tym samym RequestKey; przy zmianie danych uruchom nowy workflow.</p>",
+      "item_id": 54
+    },
+    {
+      "itemBriefText": "Zapisz sukces Reimage",
+      "itemType": "Server Message",
+      "itemActionType": "Server Message",
+      "itemAtOk": 56,
+      "itemAtFail": 57,
+      "x": 6100,
+      "y": 0,
+      "requestTimeout": 20,
+      "returnStoreVariable": "<VARIABLE HttpReturnCode>",
+      "toServerPayload": {
+        "url": "http://REPLACE_WITH_API_HOST:8089/v1/attempts/<VARIABLE AttemptId>/complete",
+        "requestMethod": "POST",
+        "requestType": "application/json",
+        "payload": {},
+        "extraheaders": "Authorization: Bearer REPLACE_WITH_API_TOKEN",
+        "reply": {}
+      },
+      "item_id": 55
+    },
+    {
+      "itemBriefText": "Czy HttpReturnCode = 200?",
+      "itemType": "Condition",
+      "itemActionType": "Condition",
+      "itemAtOk": 62,
+      "itemAtFail": 57,
+      "x": 6400,
+      "y": 0,
+      "trueif": "<VARIABLE HttpReturnCode> == 200",
+      "editorData": {
+        "condition": {
+          "conditions": [
+            {
+              "type": "condition",
+              "left": "<VARIABLE HttpReturnCode>",
+              "right": "200",
+              "operation": "=="
+            }
+          ],
+          "bindOperation": "and"
+        }
+      },
+      "item_id": 56
+    },
+    {
+      "itemBriefText": "Reimage wykonany, brak potwierdzenia",
+      "itemType": "Message",
+      "itemActionType": "Message",
+      "itemAtOk": 58,
+      "itemAtFail": -1,
+      "x": 6400,
+      "y": 600,
+      "messageIcon": "information",
+      "dismissAfter": 0,
+      "messageString": "<p>Reimage zakończony. Nie zapisano potwierdzenia. Nie instaluj ponownie systemu.</p>",
+      "item_id": 57
+    },
+    {
+      "itemBriefText": "Ponów zapis",
+      "itemType": "Question",
+      "itemActionType": "Question",
+      "itemAtOk": 55,
+      "itemAtFail": 62,
+      "x": 6800,
+      "y": 600,
+      "questionString": "<p>Ponowić wyłącznie zapis wyniku?</p>",
+      "defaultButton": "No",
+      "item_id": 58
+    },
+    {
+      "itemBriefText": "Zapisz niepowodzenie Reimage",
+      "itemType": "Server Message",
+      "itemActionType": "Server Message",
+      "itemAtOk": 60,
+      "itemAtFail": 61,
+      "x": 6100,
+      "y": 1300,
+      "requestTimeout": 20,
+      "returnStoreVariable": "<VARIABLE HttpReturnCode>",
+      "toServerPayload": {
+        "url": "http://REPLACE_WITH_API_HOST:8089/v1/attempts/<VARIABLE AttemptId>/fail",
+        "requestMethod": "POST",
+        "requestType": "application/json",
+        "payload": {
+          "failureCode": "REIMAGE_FAILED"
+        },
+        "extraheaders": "Authorization: Bearer REPLACE_WITH_API_TOKEN",
+        "reply": {}
+      },
+      "item_id": 59
+    },
+    {
+      "itemBriefText": "Czy HttpReturnCode = 200?",
+      "itemType": "Condition",
+      "itemActionType": "Condition",
+      "itemAtOk": 65,
+      "itemAtFail": 61,
+      "x": 6400,
+      "y": 1300,
+      "trueif": "<VARIABLE HttpReturnCode> == 200",
+      "editorData": {
+        "condition": {
+          "conditions": [
+            {
+              "type": "condition",
+              "left": "<VARIABLE HttpReturnCode>",
+              "right": "200",
+              "operation": "=="
+            }
+          ],
+          "bindOperation": "and"
+        }
+      },
+      "item_id": 60
+    },
+    {
+      "itemBriefText": "Brak zapisu błędu",
+      "itemType": "Message",
+      "itemActionType": "Message",
+      "itemAtOk": 65,
+      "itemAtFail": -1,
+      "x": 6800,
+      "y": 1300,
+      "messageIcon": "information",
+      "dismissAfter": 0,
+      "messageString": "<p>Reimage nie powiódł się i nie zapisano jego wyniku. Sprawdź próbę w aplikacji.</p>",
+      "item_id": 61
+    },
+    {
+      "itemBriefText": "Wyślij raport Blancco",
+      "itemType": "Send Report",
+      "itemActionType": "Send Report",
+      "itemAtOk": 64,
+      "itemAtFail": 63,
+      "x": 7200,
+      "y": 0,
+      "item_id": 62
+    },
+    {
+      "itemBriefText": "Brak raportu",
+      "itemType": "Message",
+      "itemActionType": "Message",
+      "itemAtOk": 64,
+      "itemAtFail": -1,
+      "x": 7500,
+      "y": 600,
+      "messageIcon": "information",
+      "dismissAfter": 0,
+      "messageString": "<p>Nie udało się wysłać raportu do Blancco. Wynik Reimage jest odrębnym zdarzeniem.</p>",
+      "item_id": 63
+    },
+    {
+      "itemBriefText": "Zakończ",
+      "itemType": "Finalize",
+      "itemActionType": "Finalize",
+      "itemAtOk": -1,
+      "itemAtFail": -1,
+      "x": 7900,
+      "y": 0,
+      "showFail": false,
+      "systemRestart": true,
+      "systemShutdown": false,
+      "item_id": 64
+    },
+    {
+      "itemBriefText": "Zatrzymaj do sprawdzenia",
+      "itemType": "Finalize",
+      "itemActionType": "Finalize",
+      "itemAtOk": -1,
+      "itemAtFail": -1,
+      "x": 7900,
+      "y": 1500,
+      "showFail": true,
+      "systemRestart": false,
+      "systemShutdown": false,
+      "item_id": 65
+    }
+  ],
+  "schemaVersion": "1.0.0",
+  "version": "7.21.0"
+}

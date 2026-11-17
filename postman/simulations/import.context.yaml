@@ -1,0 +1,16 @@
+purpose:
+  stands_in_for: IdoSell legacy read-only orders POST
+  unblocks: Local HTTP verification of Laravel import without production credentials
+assumptions:
+  - id: legacy-order-shape
+    status: unknown
+    claim: The configured IdoSell endpoint accepts the request and returns Results in the legacy shape.
+    reason: Derived from KeyDeploy iai.php; current tenant contract is not verified. Orbit returned unrelated providers; owner mock search skipped because CLI status is unavailable.
+    verification: Postman simulation failed before serving because dataset support could not initialize. The same Node handler served real HTTP to IdosellHttpTest; serialization, persisted order and repeated-import deduplication passed. This proves the local path, not provider compatibility. Fixture is synthetic and contains no customer data.
+    source: app/Integrations/IdosellOrders.php; KeyDeploy iai.php; https://idosell.readme.io/docs/getting-started
+    updated_at: '2026-11-17'
+fingerprints:
+  - id: initial-uncommitted
+    date: '2026-11-17'
+    commit: uncommitted
+    cli: '1.74.0'

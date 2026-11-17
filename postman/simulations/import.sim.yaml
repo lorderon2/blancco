@@ -1,0 +1,6 @@
+simulation: blancco-import
+routing: path
+mocks:
+  - name: idosell
+    routeKey: idosell
+    path: postman/mocks/idosell/config.yaml

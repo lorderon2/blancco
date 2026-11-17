@@ -1,0 +1,7 @@
+@extends('layout')
+@section('title', 'Użytkownicy')
+@section('content')
+<div class="page-head"><div><div class="eyebrow">DOSTĘP DO APLIKACJI</div><h1>Użytkownicy</h1><p class="muted">Administrator dodatkowo może tworzyć konta. Pozostałe uprawnienia są jednakowe.</p></div></div>
+<section class="card"><table><thead><tr><th>Imię i nazwisko</th><th>E-mail</th><th>Rola</th><th>Konto</th></tr></thead><tbody>@foreach($users as $user)<tr><td>{{ $user->name }}</td><td>{{ $user->email }}</td><td>{{ $user->role === 'admin' ? 'Administrator' : 'Użytkownik' }}</td><td>{{ $user->active ? 'Aktywne' : 'Nieaktywne' }}</td></tr>@endforeach</tbody></table>{{ $users->links() }}</section>
+@if(auth()->user()->role === 'admin')<section class="card narrow"><h2>Dodaj użytkownika</h2><form method="post" action="{{ route('users.store') }}">@csrf<div class="grid"><label>Imię i nazwisko<input name="name" required value="{{ old('name') }}"></label><label>E-mail<input name="email" type="email" required value="{{ old('email') }}"></label></div><div class="grid"><label>Hasło<input type="password" name="password" minlength="12" autocomplete="new-password" required></label><label>Powtórz hasło<input type="password" name="password_confirmation" autocomplete="new-password" required></label></div><label>Rola<select name="role"><option value="user">Użytkownik</option><option value="admin">Administrator</option></select></label><button class="primary">Utwórz konto</button></form></section>@endif
+@endsection
