@@ -118,6 +118,24 @@ for key in ['key_error', 'key_retry', 'lookup_error', 'lookup_retry', 'manual_in
             'busy_info', 'already_finished', 'start_error', 'start_retry_info', 'complete_error',
             'complete_retry', 'failed_ok', 'failed_error', 'report_error']:
     del nodes[key]
+# V2 canvas starts at zero; place the graph in positive, non-overlapping columns.
+incoming = {key: [] for key in nodes}
+for key, entry in nodes.items():
+    for edge in ['itemAtOk', 'itemAtFail']:
+        if entry[edge] is not None:
+            incoming[entry[edge]].append(key)
+ranks = {}
+def rank(key):
+    if key not in ranks:
+        ranks[key] = max((rank(parent) + 1 for parent in incoming[key]), default=0)
+    return ranks[key]
+columns = {}
+for key in nodes:
+    columns.setdefault(rank(key), []).append(key)
+for column, keys in columns.items():
+    for row, key in enumerate(sorted(keys, key=lambda key: nodes[key]['y'])):
+        nodes[key]['x'] = 500 + column * 380
+        nodes[key]['y'] = 500 + row * 300
 ids={key:i for i,key in enumerate(nodes)}
 objects=[]
 for key,entry in nodes.items():
