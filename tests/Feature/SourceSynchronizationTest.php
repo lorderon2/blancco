@@ -62,8 +62,7 @@ class SourceSynchronizationTest extends TestCase
     public function test_document_form_and_bc_sync_preserve_serials_coa_and_import_identity(): void
     {
         $this->actingAs(User::factory()->create());
-        $this->post('/dokumenty', ['document_number' => 'FV/1', 'windows_version' => 'WINDOWS_10_PRO', 'country' => 'Polska', 'use_dpk' => 0])->assertRedirect();
-        $this->get('/dokumenty')->assertOk()->assertSee('FV/1');
+        Order::create(['source' => 'document', 'external_id' => 'FV/1', 'document_number' => 'FV/1', 'windows_version' => 'WINDOWS_10_PRO', 'country' => 'Polska', 'source_data' => ['use_dpk' => false]]);
         $this->ledger('PF123', 'FV/1', 1);
         DB::connection('aiken_lap')->table('Units')->insert(['UnitID' => 1, 'SerialNumber' => 'PF123', 'PartNumber' => 'NOT']);
         DB::connection('aiken_lap')->table('Units_Devices')->insert(['UnitId' => 1, 'Category' => 'COA', 'Serial' => 'test-license-never-logged', 'Model' => null]);
@@ -76,6 +75,18 @@ class SourceSynchronizationTest extends TestCase
         $this->assertNotSame('test-license-never-logged', $license->encrypted_value);
         $this->assertSame('test-license-never-logged', Crypt::decryptString($license->encrypted_value));
         $this->assertSame(Decision::Auto, app(SelectInstallation::class)->forDevice(Device::first())->decision);
+    }
+
+    public function test_bc_serial_preview_does_not_save_orders_or_jobs(): void
+    {
+        $this->actingAs(User::factory()->create());
+        $this->ledger('PF123', 'FV/1', 1);
+        $this->ledger('PF123', 'FV/1', 2);
+        $this->postJson('/zlecenia/seriale-bc', ['document_number' => 'FV/1'])->assertOk()->assertJsonPath('serials', ['PF123']);
+        $this->assertDatabaseCount('orders', 0);
+        $this->assertDatabaseCount('installation_jobs', 0);
+        $this->get('/dokumenty')->assertNotFound();
+        $this->get('/zlecenia/nowe')->assertOk()->assertSee('Pobierz S/N z BC');
     }
 
     public function test_bc_filters_wrong_document_type_quantity_and_item(): void

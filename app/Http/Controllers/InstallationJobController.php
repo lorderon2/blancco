@@ -6,11 +6,13 @@ use App\Domain\Installations\CancelInstallation;
 use App\Domain\Installations\ImportAssignment;
 use App\Domain\Installations\LegacyConfiguration;
 use App\Domain\Installations\SelectInstallation;
+use App\Integrations\BcLedger;
 use App\Models\AuditEvent;
 use App\Models\InstallationJob;
 use App\Models\SyncRun;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -52,6 +54,21 @@ class InstallationJobController extends Controller
     public function create(): View
     {
         return view('jobs.create', ['windows' => LegacyConfiguration::WINDOWS, 'countries' => array_keys(LegacyConfiguration::COUNTRIES)]);
+    }
+
+    public function bcSerials(Request $request, BcLedger $ledger): JsonResponse
+    {
+        $data = $request->validate(['document_number' => 'required|string|max:120']);
+        try {
+            $serials = array_values(array_unique(array_column($ledger->assignments(trim($data['document_number'])), 'serial')));
+        } catch (\Throwable) {
+            return response()->json(['message' => 'Nie udało się pobrać seriali z BC. Spróbuj ponownie lub wpisz je ręcznie.'], 502);
+        }
+        if (count($serials) > 100) {
+            return response()->json(['message' => 'Dokument zawiera ponad 100 urządzeń. Podziel je na mniejsze zlecenia.'], 422);
+        }
+
+        return response()->json(['serials' => $serials, 'message' => $serials === [] ? 'Brak przypisanych urządzeń w BC dla tego dokumentu.' : 'Pobrano '.count($serials).' seriali. Sprawdź konfigurację i zapisz zlecenie.']);
     }
 
     public function store(Request $request, ImportAssignment $importer): RedirectResponse
