@@ -14,6 +14,11 @@ class SynchronizeAssignments
 
     public function __construct(private BcLedger $bc, private AikenInventory $aiken, private ImportAssignment $importer) {}
 
+    public function preload(array $documents): void
+    {
+        $this->bc->preload($documents);
+    }
+
     public function document(Order $order): int
     {
         $rows = $this->bc->assignments($order->document_number);

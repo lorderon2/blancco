@@ -41,6 +41,7 @@ class SyncAssignments extends Command
                 $count = $departments->sync();
             } else {
                 Order::whereIn('source', ['idosell', 'document'])->where('created_at', '>=', now()->subDays(3))->orderBy('id')->chunkById(50, function ($orders) use ($bc, &$count) {
+                    $bc->preload($orders->pluck('document_number')->all());
                     foreach ($orders as $order) {
                         $count += $bc->document($order);
                     }

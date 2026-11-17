@@ -7,8 +7,23 @@ use Illuminate\Support\Facades\DB;
 
 class BcLedger
 {
+    private ?array $preloaded = null;
+
+    public function __construct(private BcLedgerApi $api) {}
+
+    public function preload(array $documents): void
+    {
+        $this->preloaded = config('blancco.bc.source') === 'api' ? $this->api->assignments($documents) : null;
+    }
+
     public function assignments(string $document): array
     {
+        if (! config('blancco.bc.enabled')) {
+            throw new \RuntimeException('BC_NOT_CONFIGURED');
+        }
+        if (config('blancco.bc.source') === 'api') {
+            return $this->preloaded !== null ? ($this->preloaded[$document] ?? []) : ($this->api->assignments([$document])[$document] ?? []);
+        }
         $table = config('blancco.bc.table');
         if (! config('blancco.bc.enabled') || ! $table) {
             throw new \RuntimeException('BC_NOT_CONFIGURED');

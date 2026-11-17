@@ -1,0 +1,1 @@
+* * * * * ubuntu cd /var/www/blancco && /usr/bin/php8.4 artisan schedule:run >> /var/www/blancco/storage/logs/scheduler.log 2>&1
