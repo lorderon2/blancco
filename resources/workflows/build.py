@@ -84,6 +84,40 @@ node('report','Send Report','Wyślij raport Blancco',ok='finish',fail='report_er
 message('report_error','Brak raportu','Nie udało się wysłać raportu do Blancco. Wynik Reimage jest odrębnym zdarzeniem.','finish',7500,600)
 node('finish','Finalize','Zakończ',x=7900,y=0,showFail=False,systemRestart=True,systemShutdown=False)
 node('finish_fail','Finalize','Zatrzymaj do sprawdzenia',x=7900,y=1500,showFail=True,systemRestart=False,systemShutdown=False)
+# API assists installation; it must not prevent manual image selection.
+for key in ['key', 'key_ok', 'lookup', 'lookup_ok']:
+    nodes[key]['itemAtFail'] = 'manual_reset'
+for key in ['manual', 'wait', 'blocked']:
+    nodes[key]['itemAtOk'] = 'manual_reset'
+nodes['blocked']['itemAtFail'] = 'manual_reset'
+nodes['retry_question']['itemAtFail'] = 'manual_reset'
+for key in ['start_auto', 'start_auto_201', 'start_retry', 'start_retry_201', 'state_order']:
+    nodes[key]['itemAtFail'] = 'manual_reset'
+node('manual_reset', 'Set value', 'Wyczyść próbę przed wyborem ręcznym', ok='manual_key',
+     setValueExp='<VARIABLE AttemptId> = ""', x=3300, y=1000)
+nodes['manual_key']['itemAtOk'] = 'manual_online_key'
+nodes['manual_key']['itemAtFail'] = 'manual_online_no_key'
+for suffix, target in [('key', 'reimage_manual_key'), ('no_key', 'reimage_manual_no_key')]:
+    condition('manual_online_'+suffix, 'RequestKey', '', target, 'start_manual_'+suffix, 4000, 1000)
+    node('manual_clear_'+suffix, 'Set value', 'Kontynuuj ręcznie bez zapisu próby', ok=target,
+         setValueExp='<VARIABLE AttemptId> = ""', x=5300, y=1400)
+    for key in ['start_manual_'+suffix, 'start_manual_'+suffix+'_201', 'manual_state_'+suffix]:
+        nodes[key]['itemAtFail'] = 'manual_clear_'+suffix
+for key in ['reimage_key', 'reimage_no_key', 'reimage_manual_key', 'reimage_manual_no_key']:
+    nodes[key]['itemAtOk'] = 'has_attempt_success'
+    nodes[key]['itemAtFail'] = 'has_attempt_failure'
+condition('has_attempt_success', 'AttemptId', '', 'report', 'complete', 6000, 0)
+condition('has_attempt_failure', 'AttemptId', '', 'report_fail', 'failed', 6000, 1300)
+nodes['complete']['itemAtFail'] = 'report'
+nodes['complete_ok']['itemAtFail'] = 'report'
+nodes['failed']['itemAtOk'] = 'report_fail'
+nodes['failed']['itemAtFail'] = 'report_fail'
+node('report_fail', 'Send Report', 'Wyślij raport po błędzie Reimage', ok='finish_fail', fail='finish_fail', x=7200, y=1500)
+nodes['report']['itemAtFail'] = 'finish'
+for key in ['key_error', 'key_retry', 'lookup_error', 'lookup_retry', 'manual_info', 'manual_confirm',
+            'busy_info', 'already_finished', 'start_error', 'start_retry_info', 'complete_error',
+            'complete_retry', 'failed_ok', 'failed_error', 'report_error']:
+    del nodes[key]
 ids={key:i for i,key in enumerate(nodes)}
 objects=[]
 for key,entry in nodes.items():
@@ -93,6 +127,22 @@ for key,entry in nodes.items():
     objects.append(entry)
 workflow={'startItem':'Booted','reportToXml':True,'autoStart':True,'useCases':[],'processors':[],'coreActivities':[],
           'description':'Wersja do importu testowego. Uzupełnij API_HOST i API_TOKEN. Wymagany test na urządzeniu przed produkcją.',
-          'editorMetadata':{'editorGeneration':'V3','editorVersion':'7.21.0','collisionsEnabled':True,'minimizeItems':False,'profile':'bde','type':'workflow','x':0,'y':0,'commit':'1.3.0'},
-          'name':'AMSO Install v1 - test import','objects':objects,'schemaVersion':'1.0.0','version':'7.21.0'}
+          'editorMetadata':{'editorGeneration':'V2','editorVersion':'7.20.0','width':25000,'height':20000,'minimizeItems':False,'profile':'bde','type':'workflow','x':0,'y':0},
+          'name':'AMSO Install v1 - test import','objects':objects,'version':'7.20.0'}
+# Preserve the V2 condition editor and Qt Rich Text representation.
+for entry in objects:
+    editor = entry.setdefault('editorData', {})
+    editor.update(x=entry['x'], y=entry['y'])
+    if entry['itemType'] == 'Condition':
+        condition_data = editor['condition']
+        condition_data.pop('bindOperation', None)
+        condition_data.update(outerBindOperation='and', stringRepresentation=entry['trueif'], textCondition='')
+        entry['connections'] = [{'id': entry[edge], 'name': name} for edge, name in [('itemAtOk', 'Success'), ('itemAtFail', 'Failure')] if entry[edge] >= 0]
+    for field in ['messageString', 'questionString']:
+        if field in entry:
+            entry[field] = ('<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">'
+                '<html><head><meta name="qrichtext" content="1" /><meta charset="utf-8" />'
+                '<style type="text/css">p, li { white-space: pre-wrap; }</style></head>'
+                '<body style="font-family:Lato; font-size:22px; font-weight:400; font-style:normal;">'
+                + entry[field] + '</body></html>')
 Path(__file__).with_name('install-v1.json').write_text(json.dumps(workflow,ensure_ascii=False,indent=2)+'\n')
