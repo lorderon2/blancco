@@ -308,7 +308,7 @@
             }
           }
         },
-        "description": " BAR compatibility: POST with an empty body and query parameters is also supported. Do not combine query parameters with a JSON body. Authorization remains in the header.",
+        "description": " BAR compatibility: POST with an empty body and query parameters is also supported. Do not combine query parameters with a JSON body. Authorization remains in the header. BAR URL-parameter mode returns 200 for a newly created attempt because this client routes 201 through its failure output. JSON body mode retains 201.",
         "parameters": [
           {
             "name": "serial",
