@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Integrations\BlanccoReports;
+use App\Integrations\ReportSummary;
 use App\Models\Device;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -11,7 +12,7 @@ use Illuminate\Support\Str;
 
 class ReportController extends Controller
 {
-    public function index(Device $device, BlanccoReports $cloud): View
+    public function index(Device $device, BlanccoReports $cloud, ReportSummary $summary): View
     {
         $reports = [];
         $error = null;
@@ -21,7 +22,10 @@ class ReportController extends Controller
             $error = 'Nie udało się pobrać pełnej listy raportów. Sprawdź konfigurację i dostępność Blancco. Lokalne zlecenia pozostają dostępne.';
         }
 
-        return view('reports.index', compact('device', 'reports', 'error'));
+        $latest = $summary->latest($reports);
+        $sections = $latest ? $summary->sections($latest) : [];
+
+        return view('reports.index', compact('device', 'reports', 'error', 'latest', 'sections'));
     }
 
     public function pdf(string $uuid, BlanccoReports $cloud): Response|RedirectResponse

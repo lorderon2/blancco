@@ -49,6 +49,25 @@ class BlanccoReportsTest extends TestCase
         $this->assertSame('2026-11-17T10:55:13+0100', $reports[0]['date']);
     }
 
+    public function test_latest_report_summary_uses_real_chronology_and_typed_hardware_fields(): void
+    {
+        $device = Device::create(['serial_original' => 'PF123', 'serial_lookup' => 'PF123']);
+        $this->actingAs(User::factory()->create());
+        $older = $this->report('11111111-1111-4111-8111-111111111111');
+        $older['blancco_data']['description']['date'] = '2026-11-18T12:00:00+0200';
+        $newer = $this->report('22222222-2222-4222-8222-222222222222');
+        $newer['blancco_data']['description']['date'] = '2026-11-18T11:00:00+0000';
+        $newer['blancco_data']['blancco_hardware_report']['system'] = [['serial' => 'PF123'], ['model' => 'Latitude <5510>']];
+        $newer['blancco_data']['blancco_hardware_report']['memory'] = [['@type' => 'uint', 'total_memory' => 17179869184], ['free_slots' => 0]];
+        $newer['blancco_data']['blancco_hardware_report']['disks'] = [['disk' => [['model' => 'SSD ONE'], ['capacity' => 1073741824]]], ['disk' => [['model' => 'SSD TWO']]]];
+        $newer['blancco_data']['blancco_reimage_report']['reimages'] = [['reimage' => [['state' => 'Successful'], ['image' => [['image_name' => 'WIN 11 PRO']]]]]];
+        Http::fake(['cloud.test/*' => Http::response(['reports' => [$older, $newer]])]);
+        $this->get('/urzadzenia/'.$device->id.'/raporty')->assertOk()
+            ->assertViewHas('latest', fn ($report) => $report['id'] === '22222222-2222-4222-8222-222222222222')
+            ->assertSeeInOrder(['Dane z najnowszego raportu', '16,0 GiB', 'SSD ONE', 'SSD TWO', 'WIN 11 PRO', 'Raporty PDF i historia'])
+            ->assertSee('Latitude &lt;5510&gt;', false)->assertDontSee('Latitude <5510>', false);
+    }
+
     public function test_error_is_distinct_from_empty_reports_and_pdf_is_downloadable(): void
     {
         $device = Device::create(['serial_original' => 'PF123', 'serial_lookup' => 'PF123']);
