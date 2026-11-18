@@ -13,6 +13,15 @@ class ReportSummary
         return $reports[0] ?? null;
     }
 
+    public function dateLabel(?string $date): string
+    {
+        try {
+            return $date ? CarbonImmutable::parse($date)->setTimezone('Europe/Warsaw')->format('d.m.Y, H:i') : 'Brak daty';
+        } catch (\Throwable) {
+            return $date ?: 'Brak daty';
+        }
+    }
+
     private function timestamp(?string $date): int
     {
         try {
@@ -71,7 +80,9 @@ class ReportSummary
             'Numer seryjny' => $report['serial'] ?? $this->field($system, 'serial'),
             'Producent' => $this->field($system, 'manufacturer'), 'Model' => $this->field($system, 'model'),
             'Typ urządzenia' => $this->field($system, 'chassis_type'), 'Tryb BIOS' => $this->field($system, 'bios_mode'),
-            'Secure Boot' => $this->field($system, 'secure_boot_state'),
+            'Secure Boot' => match ($this->field($system, 'secure_boot_state')) {
+                'enabled' => 'Włączony', 'disabled' => 'Wyłączony', default => $this->field($system, 'secure_boot_state')
+            },
         ])];
         $cpus = $hardware['processors'] ?? [];
         foreach ($this->entries($cpus, 'processor') as $index => $cpu) {
@@ -86,7 +97,9 @@ class ReportSummary
             $sections['Dysk '.($index + 1)] = $this->rows(['Producent' => $this->field($disk, 'vendor'),
                 'Model' => $this->field($disk, 'model'), 'Numer seryjny' => $this->field($disk, 'serial'),
                 'Pojemność' => $this->size($this->field($disk, 'capacity')), 'Interfejs' => $this->field($disk, 'interface_type'),
-                'Stan dysku' => $this->field($disk, 'health')]);
+                'Stan dysku' => match ($this->field($disk, 'health')) {
+                    'good' => 'Dobry', 'bad' => 'Zły', default => $this->field($disk, 'health')
+                }]);
         }
         foreach ($this->entries($hardware['batteries'] ?? [], 'battery') as $index => $battery) {
             $sections['Bateria '.($index + 1)] = $this->rows(['Model' => $this->field($battery, 'model'),
@@ -97,8 +110,8 @@ class ReportSummary
             $image = $this->field($reimage, 'image');
             $sections['Instalacja Reimage '.($index + 1)] = $this->rows(['Wynik' => $this->field($reimage, 'state'),
                 'Obraz' => $this->field($image, 'image_name'), 'Edycja Windows' => $this->field($image, 'windows_edition'),
-                'Wersja Windows' => $this->field($image, 'windows_version'), 'Początek' => $this->field($reimage, 'start_time'),
-                'Koniec' => $this->field($reimage, 'end_time'), 'Czas trwania' => $this->field($reimage, 'elapsed_time'),
+                'Wersja Windows' => $this->field($image, 'windows_version'), 'Początek' => $this->field($reimage, 'start_time') ? $this->dateLabel($this->field($reimage, 'start_time')) : null,
+                'Koniec' => $this->field($reimage, 'end_time') ? $this->dateLabel($this->field($reimage, 'end_time')) : null, 'Czas trwania' => $this->field($reimage, 'elapsed_time'),
                 'Rodzaj COA' => $this->field($this->field($reimage, 'dpk'), 'coa_type')]);
         }
 

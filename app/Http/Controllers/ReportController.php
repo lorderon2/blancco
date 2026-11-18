@@ -24,8 +24,9 @@ class ReportController extends Controller
 
         $latest = $summary->latest($reports);
         $sections = $latest ? $summary->sections($latest) : [];
+        $dateLabel = $summary->dateLabel(...);
 
-        return view('reports.index', compact('device', 'reports', 'error', 'latest', 'sections'));
+        return view('reports.index', compact('device', 'reports', 'error', 'latest', 'sections', 'dateLabel'));
     }
 
     public function pdf(string $uuid, BlanccoReports $cloud): Response|RedirectResponse
