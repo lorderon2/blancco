@@ -31,7 +31,22 @@ class BlanccoReportsTest extends TestCase
             ->push(['reports' => [$this->report('22222222-2222-4222-8222-222222222222'), $this->report('33333333-3333-4333-8333-333333333333', 'OTHER')]]);
         $reports = app(BlanccoReports::class)->forSerial('PF123');
         $this->assertCount(2, $reports);
-        Http::assertSent(fn ($r) => ($r['cursor'] ?? null) === 'next' && $r['filter']['fields'][0]['like'] === 'PF123');
+        Http::assertSent(fn ($r) => str_contains($r->url(), 'cursor=next') && ! isset($r['cursor']) && $r['filter']['fields'][0]['like'] === 'PF123');
+    }
+
+    public function test_bar_typed_field_arrays_and_document_log_date_are_supported(): void
+    {
+        $report = $this->report('11111111-1111-4111-8111-111111111111');
+        $report['blancco_data']['blancco_hardware_report']['system'] = [
+            ['@type' => 'string', 'serial' => 'PF123'], ['@type' => 'string', 'model' => 'Latitude 5510'],
+        ];
+        unset($report['blancco_data']['description']['date']);
+        $report['blancco_data']['description']['document_log'] = [['date' => '2026-11-17T10:55:13+0100']];
+        Http::fake(['cloud.test/*' => Http::response(['reports' => [$report]])]);
+        $reports = app(BlanccoReports::class)->forSerial('PF123');
+        $this->assertCount(1, $reports);
+        $this->assertSame('Latitude 5510', $reports[0]['model']);
+        $this->assertSame('2026-11-17T10:55:13+0100', $reports[0]['date']);
     }
 
     public function test_error_is_distinct_from_empty_reports_and_pdf_is_downloadable(): void

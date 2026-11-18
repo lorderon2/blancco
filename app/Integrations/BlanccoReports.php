@@ -23,10 +23,11 @@ class BlanccoReports
         $reports = [];
         for ($page = 0; $page < 100; $page++) {
             $payload = ['format' => 'JSON', 'container' => 'NONE', 'filter' => ['date' => (object) [], 'fields' => [['name' => config('blancco.cloud.serial_field', '@system_serial'), 'like' => $serial]]]];
+            $client = $this->client()->acceptJson();
             if ($cursor !== null) {
-                $payload['cursor'] = $cursor;
+                $client = $client->withQueryParameters(['cursor' => $cursor]);
             }
-            $response = $this->client()->acceptJson()->post(config('blancco.cloud.url'), $payload)->throw();
+            $response = $client->post(config('blancco.cloud.url'), $payload)->throw();
             if ($response->status() === 204) {
                 return array_values($reports);
             }
@@ -36,7 +37,8 @@ class BlanccoReports
             }
             foreach ($body['reports'] as $report) {
                 $data = $report['blancco_data'] ?? [];
-                $returnedSerial = data_get($data, 'blancco_hardware_report.system.serial');
+                $system = data_get($data, 'blancco_hardware_report.system', []);
+                $returnedSerial = $this->systemField($system, 'serial');
                 if (! is_string($returnedSerial)) {
                     throw new \RuntimeException('BLANCCO_REPORT_SERIAL_MISSING');
                 }
@@ -47,8 +49,8 @@ class BlanccoReports
                 if (! is_string($id) || ! preg_match('/^[a-f0-9-]{36}$/iD', $id)) {
                     throw new \RuntimeException('BLANCCO_REPORT_ID_MISSING');
                 }
-                $reports[$id] = ['id' => $id, 'serial' => $returnedSerial, 'date' => data_get($data, 'description.date'),
-                    'model' => data_get($data, 'blancco_hardware_report.system.model'), 'data' => $data];
+                $reports[$id] = ['id' => $id, 'serial' => $returnedSerial, 'date' => data_get($data, 'description.date') ?? data_get(collect(data_get($data, 'description.document_log', []))->last(), 'date'),
+                    'model' => $this->systemField($system, 'model'), 'data' => $data];
             }
             $cursor = $response->header('X-BLANCCO-CURSOR');
             if (! $cursor) {
@@ -60,6 +62,20 @@ class BlanccoReports
             $seen[$cursor] = true;
         }
         throw new \RuntimeException('BLANCCO_REPORT_PAGE_LIMIT');
+    }
+
+    private function systemField(array $system, string $field): mixed
+    {
+        if (array_key_exists($field, $system)) {
+            return $system[$field];
+        }
+        foreach ($system as $entry) {
+            if (is_array($entry) && array_key_exists($field, $entry)) {
+                return $entry[$field];
+            }
+        }
+
+        return null;
     }
 
     public function pdf(string $uuid): string
