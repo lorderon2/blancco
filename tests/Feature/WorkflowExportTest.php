@@ -27,6 +27,24 @@ class WorkflowExportTest extends TestCase
         $this->assertCount(2, $nodes->where('itemType', 'Question'));
     }
 
+    public function test_bar_posts_send_parameters_in_url_without_request_body(): void
+    {
+        $workflow = json_decode(file_get_contents(resource_path('workflows/install-v1.json')), true, flags: JSON_THROW_ON_ERROR);
+        foreach ($workflow['objects'] as $node) {
+            if ($node['itemType'] !== 'Server Message') {
+                continue;
+            }
+            $request = $node['toServerPayload'];
+            if ($request['requestMethod'] === 'POST') {
+                $this->assertSame([], $request['payload']);
+            }
+            if ($node['itemBriefText'] === 'Rozpocznij według zamówienia') {
+                $this->assertStringContainsString('?serial=<VARIABLE SerialNumber>', $request['url']);
+                $this->assertStringContainsString('&requestKey=<VARIABLE RequestKey>', $request['url']);
+            }
+        }
+    }
+
     public function test_export_has_valid_edges_no_secrets_and_no_reimage_after_completion_failure(): void
     {
         $raw = file_get_contents(resource_path('workflows/install-v1.json'));

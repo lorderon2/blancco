@@ -3,6 +3,7 @@
 No token is copied from the source attachment. BAR import/device validation remains required.
 """
 import json
+from urllib.parse import quote
 from pathlib import Path
 
 nodes = {}
@@ -21,6 +22,14 @@ def question(key,title,text,ok,fail,x=0,y=0):
     node(key,'Question',title,ok,fail,x,y,questionString='<p>'+text+'</p>',defaultButton='No')
 
 def server(key,title,path,method,reply,ok,fail,payload=None,x=0,y=0):
+    if payload:
+        parameters = []
+        for name, value in payload.items():
+            value = str(value).lower() if isinstance(value, bool) else str(value)
+            encoded = value if value.startswith('<VARIABLE ') and value.endswith('>') else quote(value, safe='')
+            parameters.append(quote(name, safe='')+'='+encoded)
+        path += '?'+ '&'.join(parameters)
+        payload = {}
     node(key,'Server Message',title,ok,fail,x,y,requestTimeout=20,returnStoreVariable='<VARIABLE HttpReturnCode>',
          toServerPayload={'url':'http://REPLACE_WITH_API_HOST:8089/v1/'+path,'requestMethod':method,'requestType':'application/json',
                           'payload':payload or {},'extraheaders':'Authorization: Bearer REPLACE_WITH_API_TOKEN',

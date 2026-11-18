@@ -207,7 +207,7 @@
       "post": {
         "operationId": "startAttempt",
         "requestBody": {
-          "required": true,
+          "required": false,
           "content": {
             "application/json": {
               "schema": {
@@ -307,7 +307,64 @@
               }
             }
           }
-        }
+        },
+        "description": " BAR compatibility: POST with an empty body and query parameters is also supported. Do not combine query parameters with a JSON body. Authorization remains in the header.",
+        "parameters": [
+          {
+            "name": "serial",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Alternative to the JSON request body; do not mix both transports."
+          },
+          {
+            "name": "jobId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Alternative to the JSON request body; do not mix both transports."
+          },
+          {
+            "name": "configurationVersion",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Alternative to the JSON request body; do not mix both transports."
+          },
+          {
+            "name": "mode",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Alternative to the JSON request body; do not mix both transports."
+          },
+          {
+            "name": "requestKey",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Alternative to the JSON request body; do not mix both transports."
+          },
+          {
+            "name": "retryConfirmed",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Alternative to the JSON request body; do not mix both transports."
+          }
+        ]
       }
     },
     "/v1/attempts/{attemptId}/complete": {
@@ -421,10 +478,19 @@
               "type": "string",
               "format": "uuid"
             }
+          },
+          {
+            "name": "failureCode",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Alternative to the JSON request body; do not mix both transports."
           }
         ],
         "requestBody": {
-          "required": true,
+          "required": false,
           "content": {
             "application/json": {
               "schema": {
@@ -523,7 +589,8 @@
               }
             }
           }
-        }
+        },
+        "description": " BAR compatibility: POST with an empty body and query parameters is also supported. Do not combine query parameters with a JSON body. Authorization remains in the header."
       }
     }
   },

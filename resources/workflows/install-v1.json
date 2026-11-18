@@ -598,17 +598,10 @@
       "requestTimeout": 20,
       "returnStoreVariable": "<VARIABLE HttpReturnCode>",
       "toServerPayload": {
-        "url": "http://REPLACE_WITH_API_HOST:8089/v1/attempts/start",
+        "url": "http://REPLACE_WITH_API_HOST:8089/v1/attempts/start?serial=<VARIABLE SerialNumber>&jobId=<VARIABLE JobId>&configurationVersion=<VARIABLE ConfigurationVersion>&mode=order&requestKey=<VARIABLE RequestKey>&retryConfirmed=false",
         "requestMethod": "POST",
         "requestType": "application/json",
-        "payload": {
-          "serial": "<VARIABLE SerialNumber>",
-          "jobId": "<VARIABLE JobId>",
-          "configurationVersion": "<VARIABLE ConfigurationVersion>",
-          "mode": "order",
-          "requestKey": "<VARIABLE RequestKey>",
-          "retryConfirmed": false
-        },
+        "payload": {},
         "extraheaders": "Authorization: Bearer REPLACE_WITH_API_TOKEN",
         "reply": {
           "attemptId": "<VARIABLE AttemptId>",
@@ -710,17 +703,10 @@
       "requestTimeout": 20,
       "returnStoreVariable": "<VARIABLE HttpReturnCode>",
       "toServerPayload": {
-        "url": "http://REPLACE_WITH_API_HOST:8089/v1/attempts/start",
+        "url": "http://REPLACE_WITH_API_HOST:8089/v1/attempts/start?serial=<VARIABLE SerialNumber>&jobId=<VARIABLE JobId>&configurationVersion=<VARIABLE ConfigurationVersion>&mode=order&requestKey=<VARIABLE RequestKey>&retryConfirmed=true",
         "requestMethod": "POST",
         "requestType": "application/json",
-        "payload": {
-          "serial": "<VARIABLE SerialNumber>",
-          "jobId": "<VARIABLE JobId>",
-          "configurationVersion": "<VARIABLE ConfigurationVersion>",
-          "mode": "order",
-          "requestKey": "<VARIABLE RequestKey>",
-          "retryConfirmed": true
-        },
+        "payload": {},
         "extraheaders": "Authorization: Bearer REPLACE_WITH_API_TOKEN",
         "reply": {
           "attemptId": "<VARIABLE AttemptId>",
@@ -822,14 +808,10 @@
       "requestTimeout": 20,
       "returnStoreVariable": "<VARIABLE HttpReturnCode>",
       "toServerPayload": {
-        "url": "http://REPLACE_WITH_API_HOST:8089/v1/attempts/start",
+        "url": "http://REPLACE_WITH_API_HOST:8089/v1/attempts/start?serial=<VARIABLE SerialNumber>&mode=manual&requestKey=<VARIABLE RequestKey>",
         "requestMethod": "POST",
         "requestType": "application/json",
-        "payload": {
-          "serial": "<VARIABLE SerialNumber>",
-          "mode": "manual",
-          "requestKey": "<VARIABLE RequestKey>"
-        },
+        "payload": {},
         "extraheaders": "Authorization: Bearer REPLACE_WITH_API_TOKEN",
         "reply": {
           "attemptId": "<VARIABLE AttemptId>",
@@ -929,14 +911,10 @@
       "requestTimeout": 20,
       "returnStoreVariable": "<VARIABLE HttpReturnCode>",
       "toServerPayload": {
-        "url": "http://REPLACE_WITH_API_HOST:8089/v1/attempts/start",
+        "url": "http://REPLACE_WITH_API_HOST:8089/v1/attempts/start?serial=<VARIABLE SerialNumber>&mode=manual&requestKey=<VARIABLE RequestKey>",
         "requestMethod": "POST",
         "requestType": "application/json",
-        "payload": {
-          "serial": "<VARIABLE SerialNumber>",
-          "mode": "manual",
-          "requestKey": "<VARIABLE RequestKey>"
-        },
+        "payload": {},
         "extraheaders": "Authorization: Bearer REPLACE_WITH_API_TOKEN",
         "reply": {
           "attemptId": "<VARIABLE AttemptId>",
@@ -1320,12 +1298,10 @@
       "requestTimeout": 20,
       "returnStoreVariable": "<VARIABLE HttpReturnCode>",
       "toServerPayload": {
-        "url": "http://REPLACE_WITH_API_HOST:8089/v1/attempts/<VARIABLE AttemptId>/fail",
+        "url": "http://REPLACE_WITH_API_HOST:8089/v1/attempts/<VARIABLE AttemptId>/fail?failureCode=REIMAGE_FAILED",
         "requestMethod": "POST",
         "requestType": "application/json",
-        "payload": {
-          "failureCode": "REIMAGE_FAILED"
-        },
+        "payload": {},
         "extraheaders": "Authorization: Bearer REPLACE_WITH_API_TOKEN",
         "reply": {}
       },
