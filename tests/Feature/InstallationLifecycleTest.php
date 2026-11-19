@@ -16,7 +16,6 @@ use App\Models\InstallationJob;
 use Carbon\CarbonImmutable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
-use Illuminate\Validation\ValidationException;
 use Tests\TestCase;
 
 class InstallationLifecycleTest extends TestCase
@@ -171,16 +170,29 @@ class InstallationLifecycleTest extends TestCase
         $this->start($job->refresh(), 'physical-boot-request-0002');
     }
 
-    public function test_start_is_idempotent_and_second_boot_cannot_start_in_parallel(): void
+    public function test_start_is_idempotent_and_new_boot_replaces_unfinished_attempt(): void
     {
         $job = $this->job();
         $attempt = $this->start($job);
         $again = $this->start($job);
         $this->assertSame($attempt->id, $again->id);
         $this->assertDatabaseCount('installation_attempts', 1);
-        $this->assertSame(Decision::Busy, $this->select()->decision);
-        $this->expectException(AttemptConflict::class);
-        $this->start($job, 'physical-boot-request-0002');
+        $this->assertSame(Decision::Auto, $this->select()->decision);
+        $deadline = $job->first_valid_until->toIso8601String();
+        $attempt->update(['state' => 'unknown']);
+        $new = $this->start($job, 'physical-boot-request-0002');
+        $this->assertNotSame($attempt->id, $new->id);
+        $this->assertSame('failed', $attempt->fresh()->state);
+        $this->assertSame('RESTARTED_BY_OPERATOR', $attempt->fresh()->failure_code);
+        $this->assertSame($new->id, $job->assignment->device->executionLock->attempt_id);
+        $this->assertSame($deadline, $job->fresh()->first_valid_until->toIso8601String());
+        $this->assertSame(Decision::Auto, $this->select()->decision);
+        try {
+            app(ManageAttempts::class)->finish($attempt, true);
+            $this->fail('An old completion must not complete the new attempt.');
+        } catch (AttemptConflict) {
+            $this->assertSame('started', $new->fresh()->state);
+        }
     }
 
     public function test_stale_selection_is_rejected_after_midnight(): void
@@ -191,12 +203,13 @@ class InstallationLifecycleTest extends TestCase
         $this->start($job);
     }
 
-    public function test_cancel_is_rejected_while_attempt_is_active(): void
+    public function test_cancel_is_allowed_while_attempt_is_active(): void
     {
         $job = $this->job();
         $this->start($job);
-        $this->expectException(ValidationException::class);
         app(CancelInstallation::class)->cancel($job, 'Anulowanie');
+        $this->assertNotNull($job->fresh()->cancelled_at);
+        $this->assertSame(Decision::Manual, $this->select()->decision);
     }
 
     public function test_failure_releases_device_but_does_not_mark_job_completed(): void

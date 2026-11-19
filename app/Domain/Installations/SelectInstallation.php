@@ -13,9 +13,6 @@ final class SelectInstallation
         if (! $device) {
             return new Selection(Decision::Manual, 'NO_JOB');
         }
-        if ($device->executionLock()->exists()) {
-            return new Selection(Decision::Busy, 'IN_PROGRESS');
-        }
         $at ??= CarbonImmutable::now('UTC');
         $jobs = InstallationJob::query()->with('assignment.order')
             ->whereHas('assignment', fn ($q) => $q->where('device_id', $device->id)->whereNull('withdrawn_at'))

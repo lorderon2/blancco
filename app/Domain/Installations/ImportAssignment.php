@@ -35,7 +35,7 @@ final class ImportAssignment
             ]);
             $existing = $assignment->jobs()->latest('revision')->first();
             // Existing job keeps its identity, deadlines and cancellation, regardless of reimport.
-            if ($existing && ($existing->first_success_at || $existing->cancelled_at || $device->executionLock()->exists())) {
+            if ($existing && ($existing->first_success_at || $existing->cancelled_at)) {
                 return $existing;
             }
             $config = app(LegacyConfiguration::class)->resolve($data['source'], $data['windows_version'], $data['country'], (bool) $data['use_dpk'], (bool) ($data['has_coa'] ?? false));

@@ -12,7 +12,7 @@ class DetectStalledAttempts extends Command
 {
     protected $signature = 'blancco:detect-stalled';
 
-    protected $description = 'Oznacza przeterminowane próby jako nierozstrzygnięte bez zwalniania urządzenia';
+    protected $description = 'Oznacza przeterminowane próby jako nierozstrzygnięte bez blokowania kolejnego uruchomienia';
 
     public function handle(): int
     {

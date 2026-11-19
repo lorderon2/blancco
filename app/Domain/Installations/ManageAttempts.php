@@ -27,9 +27,6 @@ final class ManageAttempts
 
                 return $existing;
             }
-            if ($device->executionLock()->exists()) {
-                throw new AttemptConflict('Urządzenie ma nierozstrzygniętą próbę.');
-            }
             $job = null;
             $snapshot = ['mode' => $mode];
             if ($mode === 'order') {
@@ -45,6 +42,11 @@ final class ManageAttempts
             } elseif ($jobId !== null) {
                 throw new AttemptConflict('Próba ręczna nie może realizować zlecenia.');
             }
+            foreach (InstallationAttempt::where('device_id', $device->id)->whereIn('state', ['started', 'unknown'])->lockForUpdate()->get() as $previous) {
+                $previous->update(['state' => 'failed', 'finished_at' => now(), 'failure_code' => 'RESTARTED_BY_OPERATOR']);
+                Audit::record('installation_attempt', $previous->id, 'superseded');
+            }
+            DeviceExecutionLock::where('device_id', $device->id)->delete();
             $attempt = new InstallationAttempt(['device_id' => $device->id, 'job_id' => $job?->id, 'mode' => $mode,
                 'request_key' => $requestKey, 'state' => 'started', 'started_at' => now(), 'config_snapshot' => $snapshot]);
             $attempt->id = (string) Str::uuid();

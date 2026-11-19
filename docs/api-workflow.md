@@ -6,7 +6,7 @@ Kontrakt v1 zaimplementowano lokalnie w osobnej gałęzi `feat/application-v1` r
 
 JSON, Bearer, daty ISO 8601 z offsetem lub Z, niejawne lokalne daty niedopuszczalne. Odpowiedź ma wyłącznie potrzebne pola; bez SELECT * i bez kluczy licencyjnych. `useDpk` jest booleanem. Jeżeli BAR wymaga tekstu, dodatkowe `hasDpk` ma dokładnie YES/NO z tej samej wartości.
 
-Biznesowe decyzje lookup zwracają 200 i pole decision. Błąd autoryzacji 401, złe wejście 400, niedostępna baza 503. Nie traktujemy błędów technicznych jako zgody na ręczny tryb. Nagłówki Cache-Control: no-store. Decyzje: AUTO, ASK_RETRY, MANUAL, WAIT, BLOCKED, BUSY.
+Biznesowe decyzje lookup zwracają 200 i pole decision. Błąd autoryzacji 401, złe wejście 400, niedostępna baza 503. Błąd techniczny API prowadzi do ręcznego wyboru DPK i obrazu. Nagłówki Cache-Control: no-store. Decyzje: AUTO, ASK_RETRY, MANUAL, WAIT, BLOCKED.
 
 ## Operacje
 
@@ -22,7 +22,7 @@ Start: 409 dla zmiany wybranego zlecenia/konfiguracji lub zajętego urządzenia;
 
 Zlecenie order zawsze odnajdujemy ponownie po aktualnym wyborze urządzenia; sam jobId nie omija anulowania lub terminu. Dla ASK_RETRY wymagane retryConfirmed=true i świadoma odpowiedź operatora. Tryb manual nie oznacza realizacji dowolnego zamówienia; jobId=null, zapis próby urządzenia.
 
-Workflow pobiera `requestKey` raz na początku z `POST /v1/request-key` i zachowuje w zmiennej przy ponawianiu startu. Nie wymaga generatora UUID po stronie BAR. Ponowienie pobrania klucza przed startem jest bezpieczne, bo nie tworzy próby. Po wysłaniu startu nie wolno pobierać nowego klucza do ponowienia tego samego żądania. Nowy restart workflow dostaje nowy klucz; nierozstrzygnięta poprzednia próba blokuje drugą instalację.
+Workflow pobiera `requestKey` raz na początku z `POST /v1/request-key` i zachowuje w zmiennej przy ponawianiu startu. Nie wymaga generatora UUID po stronie BAR. Ponowienie pobrania klucza przed startem jest bezpieczne, bo nie tworzy próby. Po wysłaniu startu nie wolno pobierać nowego klucza do ponowienia tego samego żądania. Nowy restart workflow dostaje nowy klucz i może ponownie użyć ważnego zlecenia. Poprzednia niedokończona próba zostaje oznaczona jako przerwana (RESTARTED_BY_OPERATOR). Ponowne uruchomienie nie odnawia terminów zlecenia.
 
 Start zwraca także `state`. Tylko `started` prowadzi do Reimage; idempotentna odpowiedź dla już zakończonej próby nie może ponownie uruchomić instalacji.
 
@@ -52,7 +52,7 @@ To przykład projektowanego kontraktu, nie odpowiedź działającego serwera. 23
 2. Odczytaj oryginalny serial z raportu sprzętowego.
 3. GET lookup; rozdziel problem techniczny od decyzji biznesowej.
 4. AUTO: konfiguracja zamówienia. ASK_RETRY: pokaż datę, dokument i obraz; pytanie „Według zamówienia” / „Ręcznie”.
-5. MANUAL: ręczny wybór obrazu i DPK. WAIT/BLOCKED: pokaż konkretny powód, ponów odczyt lub świadomie wybierz ręcznie. BUSY: brak drugiej równoległej instalacji; sprawdzenie bieżącej próby.
+5. MANUAL: ręczny wybór obrazu i DPK. WAIT/BLOCKED: pokaż konkretny powód, ponów odczyt lub świadomie wybierz ręcznie. Niedokończona próba nie blokuje kolejnego uruchomienia.
 6. Start próby przed Reimage. Błąd startu nie przechodzi do automatycznego Reimage. Konfigurację zamówienia pobierz z odpowiedzi start, nie z potencjalnie starego GET.
 7. Reimage z kluczem/bez klucza. Sukces: complete z attemptId; błąd: fail z tym samym identyfikatorem.
 8. Gdy complete nie udało się zapisać, komunikat „Reimage zakończony. Nie zapisano potwierdzenia.” i ponowienie samego callback. Nigdy automatycznie ponownie do Reimage.
