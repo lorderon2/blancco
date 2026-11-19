@@ -58,6 +58,27 @@ class InstallationLifecycleTest extends TestCase
         return app(ManageAttempts::class)->start($job->assignment->device, $key, 'order', $job->id, $job->configuration_hash, $retry);
     }
 
+    public function test_reimport_after_serial_correction_keeps_history_and_deduplicates_by_order_and_device(): void
+    {
+        $old = $this->job();
+        // Reproduce an existing assignment whose serial was subsequently corrected.
+        $old->assignment->update(['source_assignment_key' => hash('sha256', 'manual|ZAM/1|PF123')]);
+        $old->assignment->device->update(['serial_lookup' => 'CORRECTED', 'serial_original' => 'CORRECTED']);
+        $deadline = $old->first_valid_until->toIso8601String();
+        $this->at('2026-11-17 10:00:00 UTC');
+        $new = $this->job();
+        $this->assertNotSame($old->id, $new->id);
+        $this->assertSame($new->id, $this->job()->id);
+        $this->assertDatabaseCount('installation_jobs', 2);
+        $this->assertDatabaseCount('device_assignments', 2);
+        $this->assertSame('CORRECTED', $old->fresh()->assignment->device->serial_original);
+        $this->assertSame($deadline, $old->fresh()->first_valid_until->toIso8601String());
+        $this->assertSame('PF123', $new->assignment->device->serial_original);
+        $newDeadline = $new->first_valid_until->toIso8601String();
+        $this->at('2026-11-18 10:00:00 UTC');
+        $this->assertSame($newDeadline, $this->job()->first_valid_until->toIso8601String());
+    }
+
     public function test_first_deadline_is_end_of_third_calendar_day_in_poland(): void
     {
         $job = $this->job();

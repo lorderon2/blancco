@@ -30,7 +30,7 @@ final class ImportAssignment
             $device = Device::firstOrCreate(['serial_lookup' => $serial], ['serial_original' => $serial]);
             $device = Device::query()->lockForUpdate()->findOrFail($device->id);
             $assignment = DeviceAssignment::firstOrCreate(['order_id' => $order->id, 'device_id' => $device->id], [
-                'source_assignment_key' => hash('sha256', $data['source'].'|'.$data['external_id'].'|'.$serial),
+                'source_assignment_key' => hash('sha256', 'assignment-v2|'.$order->id.'|'.$device->id),
                 'source_assigned_at' => CarbonImmutable::parse($data['assigned_at'])->utc(), 'source_sequence' => $data['source_sequence'] ?? null, 'first_seen_at' => now(),
             ]);
             $existing = $assignment->jobs()->latest('revision')->first();
