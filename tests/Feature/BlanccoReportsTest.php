@@ -6,6 +6,7 @@ use App\Integrations\BlanccoReports;
 use App\Models\Device;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Client\Factory;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
@@ -79,6 +80,25 @@ class BlanccoReportsTest extends TestCase
         $this->get('/urzadzenia/'.$device->id.'/raporty')->assertOk()->assertSee('Nie udało się pobrać pełnej listy')->assertDontSee('Brak raportów dla tego serialu');
         Http::fake(['cloud.test/export/*' => Http::response('%PDF-test')]);
         $this->get('/raporty/11111111-1111-4111-8111-111111111111/pdf')->assertOk()->assertHeader('Content-Type', 'application/pdf');
+    }
+
+    public function test_certificate_contains_report_key_and_serial_and_requires_authentication(): void
+    {
+        $device = Device::create(['serial_original' => 'PF123', 'serial_lookup' => 'PF123']);
+        $uuid = '11111111-1111-4111-8111-111111111111';
+        $url = '/urzadzenia/'.$device->id.'/raporty/'.$uuid.'/certyfikat';
+        $this->get($url)->assertRedirect('/login');
+        $report = $this->report($uuid);
+        $report['blancco_data']['blancco_reimage_report']['reimages'] = [['reimage' => [['dpk' => [['product_key' => 'AAAAA-BBBBB-CCCCC-DDDDD-EEEEE']]]]]];
+        Http::fake(['cloud.test/*' => Http::response(['reports' => [$report]])]);
+        $response = $this->actingAs(User::factory()->create())->get($url)->assertOk()->assertHeader('Content-Type', 'application/pdf');
+        $this->assertStringStartsWith('%PDF-', $response->getContent());
+        $this->assertStringContainsString('(AAAAA-BBBBB-CCCCC-DDDDD-EEEEE) Tj', $response->getContent());
+        $this->assertStringContainsString('(PF123) Tj', $response->getContent());
+        unset($report['blancco_data']['blancco_reimage_report']);
+        Http::swap(new Factory);
+        Http::fake(['cloud.test/*' => Http::response(['reports' => [$report]])]);
+        $this->get($url)->assertRedirect()->assertSessionHasErrors('report');
     }
 
     public function test_repeated_cursor_is_an_error_not_a_partial_success(): void

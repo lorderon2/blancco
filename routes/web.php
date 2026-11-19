@@ -28,6 +28,7 @@ Route::middleware(['auth', EnsureActiveUser::class])->group(function () {
     Route::post('/zlecenia/{job}/anuluj', [InstallationJobController::class, 'cancel'])->name('jobs.cancel');
     Route::post('/proby/{attempt}/rozstrzygnij', [AttemptController::class, 'resolve'])->name('attempts.resolve');
     Route::get('/urzadzenia/{device}/raporty', [ReportController::class, 'index'])->name('reports.index');
+    Route::get('/urzadzenia/{device}/raporty/{uuid}/certyfikat', [ReportController::class, 'certificate'])->name('reports.certificate');
     Route::get('/raporty/{uuid}/pdf', [ReportController::class, 'pdf'])->name('reports.pdf');
     Route::get('/uzytkownicy', [UserController::class, 'index'])->name('users.index');
     Route::post('/uzytkownicy', [UserController::class, 'store'])->name('users.store');
