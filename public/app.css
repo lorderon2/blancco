@@ -6,3 +6,5 @@
 .report-download-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 
 .report-full-heading{margin-top:32px;padding-top:24px;border-top:1px solid #dce4eb}.report-summary-table th,.report-summary-table td{overflow-wrap:anywhere;white-space:normal}.report-summary-table{table-layout:fixed}
+
+.brand-logo{display:block;width:220px;height:auto;max-width:100%}@media(max-width:500px){.brand-logo{width:190px}}
