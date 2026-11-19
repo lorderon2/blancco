@@ -81,7 +81,7 @@ class ReportSummary
             'Producent' => $this->field($system, 'manufacturer'), 'Model' => $this->field($system, 'model'),
             'Typ urządzenia' => $this->field($system, 'chassis_type'), 'Tryb BIOS' => $this->field($system, 'bios_mode'),
             'Secure Boot' => match ($this->field($system, 'secure_boot_state')) {
-                'enabled' => 'Włączony', 'disabled' => 'Wyłączony', default => $this->field($system, 'secure_boot_state')
+                'enabled' => 'Włączony', 'disabled' => 'Wyłączony', 'unsupported' => 'Nieobsługiwany', default => $this->field($system, 'secure_boot_state')
             },
         ])];
         $cpus = $hardware['processors'] ?? [];
@@ -112,7 +112,9 @@ class ReportSummary
                 'Obraz' => $this->field($image, 'image_name'), 'Edycja Windows' => $this->field($image, 'windows_edition'),
                 'Wersja Windows' => $this->field($image, 'windows_version'), 'Początek' => $this->field($reimage, 'start_time') ? $this->dateLabel($this->field($reimage, 'start_time')) : null,
                 'Koniec' => $this->field($reimage, 'end_time') ? $this->dateLabel($this->field($reimage, 'end_time')) : null, 'Czas trwania' => $this->field($reimage, 'elapsed_time'),
-                'Rodzaj COA' => $this->field($this->field($reimage, 'dpk'), 'coa_type')]);
+                'Rodzaj COA' => $this->field($this->field($reimage, 'dpk'), 'coa_type'),
+                'Klucz produktu' => $this->field($this->field($reimage, 'dpk'), 'product_key'),
+                'Identyfikator klucza produktu' => $this->field($this->field($reimage, 'dpk'), 'product_key_id')]);
         }
 
         return array_filter($sections);

@@ -60,11 +60,14 @@ class BlanccoReportsTest extends TestCase
         $newer['blancco_data']['blancco_hardware_report']['system'] = [['serial' => 'PF123'], ['model' => 'Latitude <5510>']];
         $newer['blancco_data']['blancco_hardware_report']['memory'] = [['@type' => 'uint', 'total_memory' => 17179869184], ['free_slots' => 0]];
         $newer['blancco_data']['blancco_hardware_report']['disks'] = [['disk' => [['model' => 'SSD ONE'], ['capacity' => 1073741824]]], ['disk' => [['model' => 'SSD TWO']]]];
-        $newer['blancco_data']['blancco_reimage_report']['reimages'] = [['reimage' => [['state' => 'Successful'], ['image' => [['image_name' => 'WIN 11 PRO']]]]]];
+        $newer['blancco_data']['blancco_reimage_report']['reimages'] = [['reimage' => [['state' => 'Successful'], ['image' => [['image_name' => 'WIN 11 PRO']]], ['dpk' => [['@type' => 'string', 'coa_type' => '11P'], ['@type' => 'string', 'product_key' => 'TEST1-TEST2-TEST3-TEST4-TEST5'], ['@type' => 'string', 'product_key_id' => 'SYNTHETIC-ID']]]]]];
         Http::fake(['cloud.test/*' => Http::response(['reports' => [$older, $newer]])]);
         $this->get('/urzadzenia/'.$device->id.'/raporty')->assertOk()
             ->assertViewHas('latest', fn ($report) => $report['id'] === '22222222-2222-4222-8222-222222222222')
             ->assertSeeInOrder(['Dane z najnowszego raportu', '16,0 GiB', 'SSD ONE', 'SSD TWO', 'WIN 11 PRO', 'Raporty PDF i historia'])
+            ->assertViewHas('sections', fn ($sections) => $sections['Instalacja Reimage 1']['Klucz produktu'] === 'TEST1-TEST2-TEST3-TEST4-TEST5'
+                && $sections['Instalacja Reimage 1']['Identyfikator klucza produktu'] === 'SYNTHETIC-ID'
+                && $sections['Instalacja Reimage 1']['Rodzaj COA'] === '11P')
             ->assertSee('Latitude &lt;5510&gt;', false)->assertDontSee('Latitude <5510>', false);
     }
 
