@@ -4,3 +4,5 @@
 .pager{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-top:20px}.pager-summary{font-size:12px;color:#6a7b8c}.pager-links{display:flex;align-items:center;gap:5px;flex-wrap:wrap}.pager-links a,.pager-links>span{display:inline-flex;align-items:center;justify-content:center;min-width:34px;min-height:34px;padding:6px 10px;border-radius:7px;font-size:12px}.pager-links a{border:1px solid #dce4eb;background:#fff}.pager-links a:hover{background:#eaf3f0;text-decoration:none}.pager-current{background:#14665d;color:#fff;font-weight:700}.pager-disabled{color:#98a4b0}.pager-gap{color:#6a7b8c}@media(max-width:600px){.pager{align-items:flex-start;flex-direction:column}.pager-links{gap:3px}.pager-links a,.pager-links>span{padding:6px 8px}}
 
 .report-download-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+
+.report-full-heading{margin-top:32px;padding-top:24px;border-top:1px solid #dce4eb}.report-summary-table th,.report-summary-table td{overflow-wrap:anywhere;white-space:normal}.report-summary-table{table-layout:fixed}

@@ -9,6 +9,10 @@
     <div class="report-summary-grid">@foreach($sections as $title => $rows)
     <section class="report-summary-section"><h3>{{ $title }}</h3><table class="report-summary-table"><tbody>@foreach($rows as $label => $value)<tr><th scope="row">{{ $label }}</th><td>{{ $value }}</td></tr>@endforeach</tbody></table></section>
     @endforeach</div>
+    <h2 class="report-full-heading">Pełne dane najnowszego raportu</h2>
+    <div class="report-summary-grid">@foreach($fullSections as $title => $rows)
+        <section class="report-summary-section"><h3>{{ $title }}</h3><table class="report-summary-table"><tbody>@foreach($rows as $label => $value)<tr><th scope="row">{{ $label }}</th><td>{{ $value }}</td></tr>@endforeach</tbody></table></section>
+    @endforeach</div>
     <p class="muted report-summary-note">Dane pochodzą wyłącznie z tego raportu. Brakujące pola nie są uzupełniane starszymi odczytami.</p>
 </section>
 @endif

@@ -25,9 +25,10 @@ class ReportController extends Controller
 
         $latest = $summary->latest($reports);
         $sections = $latest ? $summary->sections($latest) : [];
+        $fullSections = $latest ? $summary->fullSections($latest) : [];
         $dateLabel = $summary->dateLabel(...);
 
-        return view('reports.index', compact('device', 'reports', 'error', 'latest', 'sections', 'dateLabel'));
+        return view('reports.index', compact('device', 'reports', 'error', 'latest', 'sections', 'fullSections', 'dateLabel'));
     }
 
     public function certificate(Device $device, string $uuid, BlanccoReports $cloud, ReportSummary $summary, CertificatePdf $certificate): Response|RedirectResponse

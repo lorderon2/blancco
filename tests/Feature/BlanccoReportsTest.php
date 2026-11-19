@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Integrations\BlanccoReports;
+use App\Integrations\ReportSummary;
 use App\Models\Device;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -99,6 +100,24 @@ class BlanccoReportsTest extends TestCase
         Http::swap(new Factory);
         Http::fake(['cloud.test/*' => Http::response(['reports' => [$report]])]);
         $this->get($url)->assertRedirect()->assertSessionHasErrors('report');
+    }
+
+    public function test_full_report_preserves_repeated_components_unknown_fields_zero_and_false(): void
+    {
+        $summary = app(ReportSummary::class);
+        $sections = $summary->fullSections(['data' => [
+            'blancco_hardware_report' => [
+                'memory' => [['memory_bank' => [['vendor' => 'RAM ONE'], ['capacity' => 8192]]], ['memory_bank' => [['vendor' => 'RAM TWO'], ['capacity' => 4096]]], ['free_slots' => 0]],
+                'displays' => [['display' => [['resolution' => '1920x1080'], ['built_in' => false]]]],
+                'new_component' => [['new_vendor_field' => '<vendor-value>']],
+            ],
+            'description' => ['document_id' => 'REPORT-ID'],
+        ]]);
+        $values = array_merge(...array_map('array_values', array_values($sections)));
+        foreach (['RAM ONE', 'RAM TWO', '8192', '4096', '0', '1920x1080', 'Nie', '<vendor-value>', 'REPORT-ID'] as $value) {
+            $this->assertContains($value, $values);
+        }
+        $this->assertCount(9, $values);
     }
 
     public function test_repeated_cursor_is_an_error_not_a_partial_success(): void
