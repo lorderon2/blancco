@@ -47,7 +47,7 @@ class SyncAssignments extends Command
                     }
                 });
             }
-            $run->update(['state' => $bc->inventoryFailures > 0 ? 'degraded' : 'succeeded', 'finished_at' => now(), 'counts' => ['processed' => $count, 'inventory_unavailable' => $bc->inventoryFailures], 'safe_error' => $bc->inventoryFailures > 0 ? 'Część danych AIKEN jest niedostępna. Zlecenia wymagające COA pozostają zablokowane.' : null]);
+            $run->update(['state' => $bc->inventoryFailures > 0 ? 'degraded' : 'succeeded', 'finished_at' => now(), 'counts' => ['processed' => $count, 'inventory_unavailable' => $bc->inventoryFailures], 'safe_error' => $bc->inventoryFailures > 0 ? 'Synchronizacja zakończona. Część urządzeń wymaga sprawdzenia danych AIKEN; pozostałe zlecenia są obsługiwane normalnie.' : null]);
             $this->info('Przetworzono: '.$count);
 
             return self::SUCCESS;
